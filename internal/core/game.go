@@ -2,7 +2,7 @@ package core
 
 type Game struct {
 	Deck         Cards                 `bson:"deck"`
-	DealerHand   PlayerHand            `bson:"dealer_hand"`
+	DealerHand   Cards                 `bson:"dealer_hand"`
 	PlayersHands map[string]PlayerHand `bson:"players_hand"`
 }
 
