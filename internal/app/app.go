@@ -32,7 +32,7 @@ func Run() {
 
 	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBotConfig.APIKey)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	mongo, err := mongodb.NewMongoDB(ctx, mongodb.Config{
