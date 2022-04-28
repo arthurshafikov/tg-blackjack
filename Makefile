@@ -9,7 +9,7 @@ build:
 	go build -a -o $(BIN) -ldflags "$(LDFLAGS)" cmd/app/main.go
 
 run: build 
-	 $(BIN)
+	 $(BIN) -cfgFolder ./configs -env ./
 
 test: 
 	go test --short -race ./internal/...
