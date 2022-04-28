@@ -31,5 +31,18 @@ func NewCommandHandler(
 }
 
 func (c *CommandHandler) HandleStart(message *tgbotapi.Message) error {
-	return nil
+	if err := c.services.Chats.RegisterChat(c.ctx, message.Chat.ID); err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, c.messages.ChatCreatedSuccessfully)
+
+	return c.sendMessage(msg)
+}
+
+func (c *CommandHandler) sendMessage(msg tgbotapi.MessageConfig) error {
+	msg.ParseMode = "markdown"
+	_, err := c.bot.Send(msg)
+
+	return err
 }
