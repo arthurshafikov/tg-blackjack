@@ -9,6 +9,8 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	switch message.Command() {
 	case core.StartCommand:
 		return b.commandHandler.HandleStart(message)
+	case core.StatsCommand:
+		return b.commandHandler.HandleStats(message)
 	}
 
 	return nil
