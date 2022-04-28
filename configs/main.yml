@@ -1,2 +1,3 @@
 Messages:
-  Start: ""
+  ChatNotExists: "Chat not registered! Type /start command to register."
+  ChatCreatedSuccessfully: "Chat was created successfully!"

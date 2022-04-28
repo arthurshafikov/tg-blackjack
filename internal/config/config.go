@@ -25,7 +25,8 @@ type DatabaseConfig struct {
 }
 
 type Messages struct {
-	Start string
+	ChatNotExists           string
+	ChatCreatedSuccessfully string
 }
 
 func NewConfig(envPath, configFolder string) *Config {
