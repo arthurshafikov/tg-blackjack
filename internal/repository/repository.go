@@ -17,14 +17,19 @@ type Chats interface {
 type Games interface {
 	SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error
 	FinishActiveGame(ctx context.Context, telegramChatID int64) (core.Game, error)
+}
+
+type Cards interface {
+	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error
 	AddNewPlayerHand(ctx context.Context, telegramChatID int64, playerHand core.PlayerHand) error
-	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
+	DrawCard(ctx context.Context, telegramChatID int64) (*core.Card, error)
 }
 
 type Repository struct {
 	Chats
 	Games
+	Cards
 }
 
 func NewRepository(db *mongo.Client) *Repository {
@@ -33,5 +38,6 @@ func NewRepository(db *mongo.Client) *Repository {
 	return &Repository{
 		Chats: mongodb.NewChat(chatsCollection),
 		Games: mongodb.NewGame(chatsCollection),
+		Cards: mongodb.NewGame(chatsCollection),
 	}
 }
