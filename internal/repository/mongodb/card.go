@@ -83,5 +83,6 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (*core.Card, 
 		return nil, err
 	}
 
-	return &chat.ActiveGame.Deck[len(chat.ActiveGame.Deck)-1], nil
+	// todo what if deck is empty?
+	return chat.ActiveGame.Deck.DrawCard(), nil
 }

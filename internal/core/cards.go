@@ -47,6 +47,14 @@ func NewCards() Cards {
 	return cards
 }
 
+func (cards Cards) DrawCard() *Card {
+	if len(cards) < 1 {
+		return nil
+	}
+
+	return &cards[len(cards)-1]
+}
+
 func (cards Cards) CountValue() int {
 	var value int
 
