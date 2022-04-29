@@ -61,7 +61,7 @@ func (g *Game) FinishActiveGame(ctx context.Context, telegramChatID int64) (core
 	return chat.ActiveGame, nil
 }
 
-func (g *Game) AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card string) error {
+func (g *Game) AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
 		bson.M{"active_game.players_hands.username": username},
@@ -92,7 +92,7 @@ func (g *Game) AddNewPlayerHand(ctx context.Context, telegramChatID int64, playe
 	return nil
 }
 
-func (g *Game) AddCardToDealer(ctx context.Context, telegramChatID int64, card string) error {
+func (g *Game) AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error {
 	filter := bson.M{"telegram_chat_id": telegramChatID}
 	update := bson.M{"$push": bson.M{"active_game.dealer_hand": card}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {

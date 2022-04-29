@@ -1,6 +1,7 @@
 package core
 
 import (
+	"log"
 	"math/rand"
 	"time"
 )
@@ -28,14 +29,16 @@ var CardSymbols = []string{
 	"♠",
 }
 
-type Cards []string
+type Card string
+
+type Cards []Card
 
 func NewCards() Cards {
 	cards := Cards{}
 
 	for v := range CardValues {
 		for _, s := range CardSymbols {
-			cards = append(cards, s+v)
+			cards = append(cards, Card(s+v))
 		}
 	}
 	rand.Seed(time.Now().UnixNano())
@@ -47,8 +50,17 @@ func NewCards() Cards {
 func (cards Cards) CountValue() int {
 	var value int
 
-	for _, v := range cards {
-		value += CardValues[trimLeftChars(v, 1)]
+	for _, card := range cards {
+		value += card.GetValue()
+	}
+
+	return value
+}
+
+func (c Card) GetValue() int {
+	value, ok := CardValues[trimLeftChars(string(c), 1)]
+	if !ok {
+		log.Printf("wrong value for card %s", c)
 	}
 
 	return value
