@@ -65,24 +65,25 @@ func (g *Game) AddNewPlayerHand(ctx context.Context, telegramChatID int64, playe
 }
 
 // todo test for concurrency
-func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (*core.Card, error) {
+func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error) {
+	var card core.Card
+
 	filter := bson.M{"telegram_chat_id": telegramChatID}
 	update := bson.M{"$pop": bson.M{"active_game.deck": 1}}
 
 	res := g.collection.FindOneAndUpdate(ctx, filter, update)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, core.ErrNotFound
+			return card, core.ErrNotFound
 		}
 
-		return nil, err
+		return card, err
 	}
 
 	var chat core.Chat
 	if err := res.Decode(&chat); err != nil {
-		return nil, err
+		return card, err
 	}
 
-	// todo what if deck is empty?
-	return chat.ActiveGame.Deck.DrawCard(), nil
+	return chat.ActiveGame.Deck.DrawCard()
 }

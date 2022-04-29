@@ -23,7 +23,7 @@ type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error
 	AddNewPlayerHand(ctx context.Context, telegramChatID int64, playerHand core.PlayerHand) error
-	DrawCard(ctx context.Context, telegramChatID int64) (*core.Card, error)
+	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
 }
 
 type Repository struct {

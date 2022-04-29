@@ -7,4 +7,5 @@ var (
 	ErrServerError = errors.New("500 Server Error")
 
 	ErrActiveGame = errors.New("chat has active game")
+	ErrDeckEmpty  = errors.New("deck is empty")
 )
