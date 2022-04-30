@@ -52,22 +52,3 @@ func (c *Chat) RegisterChat(ctx context.Context, telegramChatID int64) error {
 
 	return err
 }
-
-func (c *Chat) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
-	res := c.collection.FindOne(ctx, filter)
-	if err := res.Err(); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, core.ErrNotFound
-		}
-
-		return nil, err
-	}
-
-	var chat core.Chat
-	if err := res.Decode(&chat); err != nil {
-		return nil, err
-	}
-
-	return chat.Statistics, nil
-}

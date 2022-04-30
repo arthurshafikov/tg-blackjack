@@ -11,7 +11,11 @@ import (
 type Chats interface {
 	CheckChatExists(ctx context.Context, telegramChatID int64) error
 	RegisterChat(ctx context.Context, telegramChatID int64) error
+}
+
+type Statistic interface {
 	GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error)
+	SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error
 }
 
 type Games interface {
@@ -28,6 +32,7 @@ type Cards interface {
 
 type Repository struct {
 	Chats
+	Statistic
 	Games
 	Cards
 }
@@ -36,8 +41,9 @@ func NewRepository(db *mongo.Client) *Repository {
 	chatsCollection := db.Database("homestead").Collection("chats")
 
 	return &Repository{
-		Chats: mongodb.NewChat(chatsCollection),
-		Games: mongodb.NewGame(chatsCollection),
-		Cards: mongodb.NewGame(chatsCollection),
+		Chats:     mongodb.NewChat(chatsCollection),
+		Statistic: mongodb.NewStatistic(chatsCollection),
+		Games:     mongodb.NewGame(chatsCollection),
+		Cards:     mongodb.NewGame(chatsCollection),
 	}
 }
