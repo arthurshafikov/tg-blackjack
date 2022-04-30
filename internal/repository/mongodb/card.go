@@ -102,6 +102,23 @@ func (g *Game) DrawCards(ctx context.Context, telegramChatID int64, amount int) 
 	return cards, nil
 }
 
+func (g *Game) StopDrawing(ctx context.Context, telegramChatID int64, username string) error {
+	filter := bson.A{
+		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{"active_game.players_hands.username": username},
+	}
+	update := bson.M{"$set": bson.M{"active_game.players_hands.$.stop": true}}
+	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return core.ErrNotFound
+		}
+
+		return err
+	}
+
+	return nil
+}
+
 func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error) {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
