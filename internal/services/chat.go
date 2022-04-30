@@ -43,18 +43,3 @@ func (c *ChatService) RegisterChat(ctx context.Context, telegramChatID int64) er
 
 	return nil
 }
-
-func (c *ChatService) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	statistics, err := c.repo.GetStatistics(ctx, telegramChatID)
-	if err != nil {
-		if !errors.Is(err, core.ErrNotFound) {
-			c.logger.Error(err)
-
-			return statistics, core.ErrServerError
-		}
-
-		return statistics, core.ErrNotFound
-	}
-
-	return statistics, nil
-}

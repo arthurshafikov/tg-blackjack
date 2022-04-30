@@ -7,7 +7,7 @@ import (
 )
 
 func (c *CommandHandler) HandleStats(message *tgbotapi.Message) error {
-	stats, err := c.services.Chats.GetStatistics(c.ctx, message.Chat.ID)
+	stats, err := c.services.Statistics.GetStatistics(c.ctx, message.Chat.ID)
 	if err != nil {
 		return err
 	}
