@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/repository"
@@ -41,12 +42,35 @@ func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) error {
 	return g.repo.SetActiveGame(ctx, telegramChatID, game)
 }
 
+func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error) {
+	result := true
+	game, err := g.repo.GetActiveGame(ctx, telegramChatID)
+	if err != nil {
+		if !errors.Is(err, core.ErrNotFound) {
+			g.logger.Error(err)
+
+			return result, core.ErrServerError
+		}
+
+		return result, core.ErrNotFound
+	}
+
+	for _, playerHand := range game.PlayersHands {
+		if !playerHand.Stop {
+			result = false
+		}
+	}
+
+	return result, nil
+}
+
 func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
 	game, err := g.repo.FinishActiveGame(ctx, telegramChatID)
 	if err != nil {
 		return nil, err
 	}
 
+	// todo dealer should draw cards, implement...
 	dealerValue := game.DealerHand.CountValue()
 
 	gameResult := core.UsersStatistics{}

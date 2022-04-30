@@ -20,6 +20,7 @@ type Statistics interface {
 type Games interface {
 	NewGame(ctx context.Context, telegramChatID int64) error
 	FinishGame(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error)
+	CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error)
 }
 
 type Cards interface {
