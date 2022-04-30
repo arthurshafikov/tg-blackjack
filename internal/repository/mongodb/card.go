@@ -87,3 +87,31 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 
 	return chat.ActiveGame.Deck.DrawCard()
 }
+
+func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error) {
+	filter := bson.M{"$and": bson.A{
+		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{"active_game.players_hands.username": username},
+	}}
+	res := g.collection.FindOne(ctx, filter)
+	if err := res.Err(); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, core.ErrNotFound
+		}
+
+		return nil, err
+	}
+
+	var chat core.Chat
+	if err := res.Decode(&chat); err != nil {
+		return nil, err
+	}
+
+	for _, playerHand := range chat.ActiveGame.PlayersHands {
+		if playerHand.Username == username {
+			return &playerHand, nil
+		}
+	}
+
+	return nil, core.ErrNotFound
+}
