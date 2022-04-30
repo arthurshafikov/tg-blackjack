@@ -88,6 +88,20 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 	return chat.ActiveGame.Deck.DrawCard()
 }
 
+func (g *Game) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
+	cards := core.Cards{}
+	for i := 0; i < amount; i++ {
+		card, err := g.DrawCard(ctx, telegramChatID)
+		if err != nil {
+			return nil, err
+		}
+
+		cards = append(cards, card)
+	}
+
+	return cards, nil
+}
+
 func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error) {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},

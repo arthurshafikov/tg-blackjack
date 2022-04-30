@@ -28,6 +28,7 @@ type Cards interface {
 	AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error
 	AddNewPlayerHand(ctx context.Context, telegramChatID int64, playerHand core.PlayerHand) error
 	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
+	DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error)
 	GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error)
 }
 
