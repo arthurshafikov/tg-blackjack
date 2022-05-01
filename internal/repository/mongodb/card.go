@@ -21,7 +21,7 @@ func NewCard(collection *mongo.Collection) *Card {
 
 func (g *Game) AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error {
 	filter := bson.M{"telegram_chat_id": telegramChatID}
-	update := bson.M{"$push": bson.M{"active_game.dealer_hand": card}}
+	update := bson.M{"$push": bson.M{"active_game.dealer": card}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound

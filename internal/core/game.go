@@ -1,8 +1,8 @@
 package core
 
 type Game struct {
-	DealerHand Cards    `bson:"dealer_hand"`
-	Players    []Player `bson:"players"`
+	Dealer  Cards    `bson:"dealer"`
+	Players []Player `bson:"players"`
 }
 
 type Player struct {
