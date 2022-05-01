@@ -103,10 +103,10 @@ func (g *Game) DrawCards(ctx context.Context, telegramChatID int64, amount int) 
 }
 
 func (g *Game) StopDrawing(ctx context.Context, telegramChatID int64, username string) error {
-	filter := bson.A{
+	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
 		bson.M{"active_game.players_hands.username": username},
-	}
+	}}
 	update := bson.M{"$set": bson.M{"active_game.players_hands.$.stop": true}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
