@@ -34,12 +34,22 @@ func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) error {
 	}
 
 	game := core.Game{
-		Deck:         deck,
+		Deck:         *deck,
 		DealerHand:   dealerHand,
 		PlayersHands: []core.PlayerHand{},
 	}
 
-	return g.repo.SetActiveGame(ctx, telegramChatID, game)
+	if err := g.repo.SetActiveGame(ctx, telegramChatID, game); err != nil {
+		if !errors.Is(err, core.ErrActiveGame) {
+			g.logger.Error(err)
+
+			return core.ErrServerError
+		}
+
+		return core.ErrActiveGame
+	}
+
+	return nil
 }
 
 func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error) {
@@ -67,7 +77,13 @@ func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramC
 func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
 	game, err := g.repo.FinishActiveGame(ctx, telegramChatID)
 	if err != nil {
-		return nil, err
+		if !errors.Is(err, core.ErrNotFound) {
+			g.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+
+		return nil, core.ErrNotFound
 	}
 
 	// todo dealer should draw cards, implement...
@@ -90,7 +106,9 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 	}
 
 	if err := g.statisticService.IncrementStatistic(ctx, telegramChatID, gameResult); err != nil {
-		return nil, err
+		g.logger.Error(err)
+
+		return nil, core.ErrServerError
 	}
 
 	return gameResult, nil

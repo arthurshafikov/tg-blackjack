@@ -1,23 +1,23 @@
 package core
 
 type Deck struct {
-	cards Cards
+	Cards Cards `bson:"cards"`
 }
 
 func NewDeck() *Deck {
 	return &Deck{
-		cards: NewCards(),
+		Cards: NewCards(),
 	}
 }
 
 func (d *Deck) IsEmpty() bool {
-	return len(d.cards) < 1
+	return len(d.Cards) < 1
 }
 
 // todo test for concurrency
 func (d *Deck) DrawCards(amount int) (Cards, error) {
 	var drawedCards Cards
-	deckLength := len(d.cards)
+	deckLength := len(d.Cards)
 	if deckLength < 1 {
 		return drawedCards, ErrDeckEmpty
 	}
@@ -26,8 +26,8 @@ func (d *Deck) DrawCards(amount int) (Cards, error) {
 		amount = deckLength
 	}
 
-	drawedCards = d.cards[deckLength-amount:]
-	d.cards = d.cards[:deckLength-amount]
+	drawedCards = d.Cards[deckLength-amount:]
+	d.Cards = d.Cards[:deckLength-amount]
 
 	return drawedCards, nil
 }
