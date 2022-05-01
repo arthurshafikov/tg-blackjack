@@ -65,6 +65,22 @@ func (c *CardService) DrawCard(
 	return playerHand, nil
 }
 
+func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
+	card, err := c.repo.DrawCard(ctx, telegramChatID)
+	if err != nil {
+		c.logger.Error(err)
+
+		return card, core.ErrServerError
+	}
+	if err := c.repo.AddCardToDealer(ctx, telegramChatID, card); err != nil {
+		c.logger.Error(err)
+
+		return card, core.ErrServerError
+	}
+
+	return card, nil
+}
+
 func (c *CardService) StopDrawing(
 	ctx context.Context,
 	telegramChatID int64,

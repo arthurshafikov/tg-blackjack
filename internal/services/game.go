@@ -14,27 +14,26 @@ type GameService struct {
 	repo repository.Games
 
 	statisticService Statistics
+	cardService      Cards
 }
 
-func NewGameService(logger Logger, repo repository.Games, statisticService Statistics) *GameService {
+func NewGameService(
+	logger Logger,
+	repo repository.Games,
+	statisticService Statistics,
+	cardService Cards,
+) *GameService {
 	return &GameService{
 		logger:           logger,
 		repo:             repo,
 		statisticService: statisticService,
+		cardService:      cardService,
 	}
 }
 
-func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) error {
-	deck := core.NewDeck()
-	dealerHand, err := deck.DrawCards(2)
-	if err != nil {
-		g.logger.Error(err)
-
-		return core.ErrServerError
-	}
-
+func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
 	game := core.Game{
-		DealerHand:   dealerHand,
+		DealerHand:   core.Cards{},
 		PlayersHands: []core.PlayerHand{},
 	}
 
@@ -42,13 +41,22 @@ func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) error {
 		if !errors.Is(err, core.ErrActiveGame) {
 			g.logger.Error(err)
 
-			return core.ErrServerError
+			return nil, core.ErrServerError
 		}
 
-		return core.ErrActiveGame
+		return nil, core.ErrActiveGame
 	}
 
-	return nil
+	for i := 0; i < 2; i++ {
+		_, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
+		if err != nil {
+			g.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+	}
+
+	return &game, nil
 }
 
 func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error) {
