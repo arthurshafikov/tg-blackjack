@@ -42,6 +42,7 @@ func (c *Chat) RegisterChat(ctx context.Context, telegramChatID int64) error {
 		TelegramChatID: telegramChatID,
 		ActiveGame:     core.Game{},
 		Statistics:     core.UsersStatistics{},
+		Deck:           *core.NewDeck(),
 	}
 	update := bson.M{
 		"$setOnInsert": chat,

@@ -85,7 +85,7 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 		return card, err
 	}
 
-	return chat.ActiveGame.Deck.DrawCard()
+	return chat.Deck.DrawCard()
 }
 
 func (g *Game) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {

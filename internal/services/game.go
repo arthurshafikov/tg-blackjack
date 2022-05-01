@@ -34,7 +34,6 @@ func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) error {
 	}
 
 	game := core.Game{
-		Deck:         *deck,
 		DealerHand:   dealerHand,
 		PlayersHands: []core.PlayerHand{},
 	}
