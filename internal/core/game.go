@@ -1,11 +1,11 @@
 package core
 
 type Game struct {
-	DealerHand   Cards        `bson:"dealer_hand"`
-	PlayersHands []PlayerHand `bson:"players_hands"`
+	DealerHand Cards    `bson:"dealer_hand"`
+	Players    []Player `bson:"players"`
 }
 
-type PlayerHand struct {
+type Player struct {
 	Username string `bson:"username"`
 	Cards    Cards  `bson:"cards"`
 	Stop     bool   `bson:"stop"`

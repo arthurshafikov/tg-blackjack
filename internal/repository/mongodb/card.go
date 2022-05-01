@@ -33,12 +33,12 @@ func (g *Game) AddCardToDealer(ctx context.Context, telegramChatID int64, card c
 	return nil
 }
 
-func (g *Game) AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error {
+func (g *Game) AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
-		bson.M{"active_game.players_hands.username": username},
+		bson.M{"active_game.players.username": username},
 	}}
-	update := bson.M{"$push": bson.M{"active_game.players_hands.$.cards": card}}
+	update := bson.M{"$push": bson.M{"active_game.players.$.cards": card}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound
@@ -50,9 +50,9 @@ func (g *Game) AddCardToPlayerHand(ctx context.Context, telegramChatID int64, us
 	return nil
 }
 
-func (g *Game) AddNewPlayerHand(ctx context.Context, telegramChatID int64, playerHand core.PlayerHand) error {
+func (g *Game) AddNewPlayer(ctx context.Context, telegramChatID int64, playerHand core.Player) error {
 	filter := bson.M{"telegram_chat_id": telegramChatID}
-	update := bson.M{"$push": bson.M{"active_game.players_hands": playerHand}}
+	update := bson.M{"$push": bson.M{"active_game.players": playerHand}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err == nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound
@@ -113,9 +113,9 @@ func (g *Game) DrawCards(ctx context.Context, telegramChatID int64, amount int) 
 func (g *Game) StopDrawing(ctx context.Context, telegramChatID int64, username string) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
-		bson.M{"active_game.players_hands.username": username},
+		bson.M{"active_game.players.username": username},
 	}}
-	update := bson.M{"$set": bson.M{"active_game.players_hands.$.stop": true}}
+	update := bson.M{"$set": bson.M{"active_game.players.$.stop": true}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound
@@ -127,10 +127,10 @@ func (g *Game) StopDrawing(ctx context.Context, telegramChatID int64, username s
 	return nil
 }
 
-func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error) {
+func (g *Game) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
-		bson.M{"active_game.players_hands.username": username},
+		bson.M{"active_game.players.username": username},
 	}}
 	res := g.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
@@ -146,7 +146,7 @@ func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username
 		return nil, err
 	}
 
-	for _, playerHand := range chat.ActiveGame.PlayersHands {
+	for _, playerHand := range chat.ActiveGame.Players {
 		if playerHand.Username == username {
 			return &playerHand, nil
 		}

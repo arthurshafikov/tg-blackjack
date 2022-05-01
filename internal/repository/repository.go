@@ -26,12 +26,12 @@ type Games interface {
 
 type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
-	AddCardToPlayerHand(ctx context.Context, telegramChatID int64, username string, card core.Card) error
-	AddNewPlayerHand(ctx context.Context, telegramChatID int64, playerHand core.PlayerHand) error
+	AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error
+	AddNewPlayer(ctx context.Context, telegramChatID int64, playerHand core.Player) error
 	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
 	DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error)
 	StopDrawing(ctx context.Context, telegramChatID int64, username string) error
-	GetPlayerHand(ctx context.Context, telegramChatID int64, username string) (*core.PlayerHand, error)
+	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
 }
 
 type Repository struct {

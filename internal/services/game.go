@@ -33,8 +33,8 @@ func NewGameService(
 
 func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
 	game := core.Game{
-		DealerHand:   core.Cards{},
-		PlayersHands: []core.PlayerHand{},
+		DealerHand: core.Cards{},
+		Players:    []core.Player{},
 	}
 
 	if err := g.repo.SetActiveGame(ctx, telegramChatID, game); err != nil {
@@ -72,7 +72,7 @@ func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramC
 		return result, core.ErrNotFound
 	}
 
-	for _, playerHand := range game.PlayersHands {
+	for _, playerHand := range game.Players {
 		if !playerHand.Stop {
 			result = false
 		}
@@ -98,7 +98,7 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 
 	gameResult := core.UsersStatistics{}
 
-	for _, playerHand := range game.PlayersHands {
+	for _, playerHand := range game.Players {
 		result := 0
 		playerValue := playerHand.Cards.CountValue()
 

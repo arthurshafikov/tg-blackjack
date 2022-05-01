@@ -24,8 +24,8 @@ func (c *CardService) DrawCard(
 	ctx context.Context,
 	telegramChatID int64,
 	username string,
-) (*core.PlayerHand, error) {
-	playerHand, err := c.repo.GetPlayerHand(ctx, telegramChatID, username)
+) (*core.Player, error) {
+	playerHand, err := c.repo.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			c.logger.Error(err)
@@ -33,7 +33,7 @@ func (c *CardService) DrawCard(
 			return playerHand, core.ErrServerError
 		}
 
-		return c.createNewPlayerHand(ctx, telegramChatID, username)
+		return c.createNewPlayer(ctx, telegramChatID, username)
 	}
 
 	if playerHand.Stop {
@@ -99,11 +99,11 @@ func (c *CardService) StopDrawing(
 	return nil
 }
 
-func (c *CardService) createNewPlayerHand(
+func (c *CardService) createNewPlayer(
 	ctx context.Context,
 	telegramChatID int64,
 	username string,
-) (*core.PlayerHand, error) {
+) (*core.Player, error) {
 	playerCards, err := c.repo.DrawCards(ctx, telegramChatID, 2)
 	if err != nil {
 		c.logger.Error(err)
@@ -111,11 +111,11 @@ func (c *CardService) createNewPlayerHand(
 		return nil, core.ErrServerError
 	}
 
-	playerHand := &core.PlayerHand{
+	playerHand := &core.Player{
 		Username: username,
 		Cards:    playerCards,
 	}
-	if err := c.repo.AddNewPlayerHand(ctx, telegramChatID, *playerHand); err != nil {
+	if err := c.repo.AddNewPlayer(ctx, telegramChatID, *playerHand); err != nil {
 		c.logger.Error(err)
 
 		return nil, core.ErrServerError
@@ -133,7 +133,7 @@ func (c *CardService) drawCardFromDeckToUser(
 	if err != nil {
 		return card, err
 	}
-	if err := c.repo.AddCardToPlayerHand(ctx, telegramChatID, username, card); err != nil {
+	if err := c.repo.AddCardToPlayer(ctx, telegramChatID, username, card); err != nil {
 		return card, err
 	}
 
