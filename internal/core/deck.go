@@ -39,7 +39,7 @@ func (d *Deck) DrawCard() (Card, error) {
 	if err != nil {
 		return card, nil
 	}
-	card = cards[len(cards)]
+	card = cards[len(cards)-1]
 
 	return card, nil
 }

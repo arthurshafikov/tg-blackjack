@@ -69,7 +69,7 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 	var card core.Card
 
 	filter := bson.M{"telegram_chat_id": telegramChatID}
-	update := bson.M{"$pop": bson.M{"active_game.deck": 1}}
+	update := bson.M{"$pop": bson.M{"deck.cards": 1}}
 
 	res := g.collection.FindOneAndUpdate(ctx, filter, update)
 	if err := res.Err(); err != nil {
