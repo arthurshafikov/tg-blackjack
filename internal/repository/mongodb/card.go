@@ -85,6 +85,14 @@ func (g *Game) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 		return card, err
 	}
 
+	if chat.Deck.IsEmpty() {
+		var err error
+		chat.Deck, err = g.setNewDeck(ctx, telegramChatID)
+		if err != nil {
+			return card, err
+		}
+	}
+
 	return chat.Deck.DrawCard()
 }
 
@@ -145,4 +153,21 @@ func (g *Game) GetPlayerHand(ctx context.Context, telegramChatID int64, username
 	}
 
 	return nil, core.ErrNotFound
+}
+
+func (g *Game) setNewDeck(ctx context.Context, telegramChatID int64) (core.Deck, error) {
+	deck := *core.NewDeck()
+	filter := bson.M{"telegram_chat_id": telegramChatID}
+	update := bson.M{"$set": bson.M{"deck": deck}}
+
+	res := g.collection.FindOneAndUpdate(ctx, filter, update)
+	if err := res.Err(); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return deck, core.ErrNotFound
+		}
+
+		return deck, err
+	}
+
+	return deck, nil
 }
