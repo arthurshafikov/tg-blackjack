@@ -1,5 +1,5 @@
 Messages:
-  ChatNotExists: "Chat not registered! Type /start command to register."
+  ChatNotExists: "Chat is not registered! Type /start command to register."
   ChatCreatedSuccessfully: "Chat was created successfully!"
 
   PlayerCantDraw: "*You cannot draw more cards!*"
