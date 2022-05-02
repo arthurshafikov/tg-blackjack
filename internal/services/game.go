@@ -48,12 +48,14 @@ func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) (*core.
 	}
 
 	for i := 0; i < 2; i++ {
-		_, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
+		card, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
 		if err != nil {
 			g.logger.Error(err)
 
 			return nil, core.ErrServerError
 		}
+
+		game.Dealer = append(game.Dealer, card)
 	}
 
 	return &game, nil
