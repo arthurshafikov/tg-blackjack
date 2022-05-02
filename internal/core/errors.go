@@ -8,6 +8,6 @@ var (
 
 	ErrActiveGame = errors.New("chat has active game")
 	ErrDeckEmpty  = errors.New("deck is empty")
-	ErrMoreThan21 = errors.New("more than 21")
+	ErrBusted     = errors.New("more than 21")
 	ErrCantDraw   = errors.New("player can't draw more cards")
 )

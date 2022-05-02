@@ -72,8 +72,8 @@ func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramC
 		return result, core.ErrNotFound
 	}
 
-	for _, playerHand := range game.Players {
-		if !playerHand.Stop {
+	for _, player := range game.Players {
+		if !player.Stop {
 			result = false
 		}
 	}
@@ -98,9 +98,9 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 
 	gameResult := core.UsersStatistics{}
 
-	for _, playerHand := range game.Players {
+	for _, player := range game.Players {
 		result := 0
-		playerValue := playerHand.Cards.CountValue()
+		playerValue := player.Cards.CountValue()
 
 		// todo implement blackjack logic
 		if playerValue < dealerValue {
@@ -109,7 +109,7 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 			result = +1
 		}
 
-		gameResult[playerHand.Username] = result
+		gameResult[player.Username] = result
 	}
 
 	if err := g.statisticService.IncrementStatistic(ctx, telegramChatID, gameResult); err != nil {

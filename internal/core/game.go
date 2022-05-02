@@ -9,4 +9,5 @@ type Player struct {
 	Username string `bson:"username"`
 	Cards    Cards  `bson:"cards"`
 	Stop     bool   `bson:"stop"`
+	Busted   bool   `bson:"busted"`
 }

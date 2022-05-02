@@ -25,44 +25,50 @@ func (c *CardService) DrawCard(
 	telegramChatID int64,
 	username string,
 ) (*core.Player, error) {
-	playerHand, err := c.repo.GetPlayer(ctx, telegramChatID, username)
+	player, err := c.repo.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			c.logger.Error(err)
 
-			return playerHand, core.ErrServerError
+			return player, core.ErrServerError
 		}
 
 		return c.createNewPlayer(ctx, telegramChatID, username)
 	}
 
-	if playerHand.Stop {
-		return playerHand, core.ErrCantDraw
+	if player.Stop {
+		return player, core.ErrCantDraw
 	}
 
 	card, err := c.drawCardFromDeckToUser(ctx, telegramChatID, username)
 	if err != nil {
 		c.logger.Error(err)
 
-		return playerHand, core.ErrServerError
+		return player, core.ErrServerError
 	}
 
-	playerHand.Cards = append(playerHand.Cards, card)
+	player.Cards = append(player.Cards, card)
 
-	if playerHand.Cards.CountValue() >= 21 {
-		playerHand.Stop = true
-		if err := c.StopDrawing(ctx, telegramChatID, username); err != nil {
+	if player.Cards.CountValue() >= 21 {
+		player.Stop = true
+		player.Busted = true
+
+		if player.Cards.CountValue() == 21 {
+			player.Busted = false
+		}
+
+		if err := c.StopDrawing(ctx, telegramChatID, player); err != nil {
 			c.logger.Error(err)
 
 			return nil, core.ErrServerError
 		}
 
-		if playerHand.Cards.CountValue() > 21 {
-			return playerHand, core.ErrMoreThan21
+		if player.Busted {
+			return player, core.ErrBusted
 		}
 	}
 
-	return playerHand, nil
+	return player, nil
 }
 
 func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
@@ -84,9 +90,9 @@ func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChat
 func (c *CardService) StopDrawing(
 	ctx context.Context,
 	telegramChatID int64,
-	username string,
+	player *core.Player,
 ) error {
-	if err := c.repo.StopDrawing(ctx, telegramChatID, username); err != nil {
+	if err := c.repo.StopDrawing(ctx, telegramChatID, player); err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			c.logger.Error(err)
 
@@ -111,17 +117,17 @@ func (c *CardService) createNewPlayer(
 		return nil, core.ErrServerError
 	}
 
-	playerHand := &core.Player{
+	player := &core.Player{
 		Username: username,
 		Cards:    playerCards,
 	}
-	if err := c.repo.AddNewPlayer(ctx, telegramChatID, *playerHand); err != nil {
+	if err := c.repo.AddNewPlayer(ctx, telegramChatID, *player); err != nil {
 		c.logger.Error(err)
 
 		return nil, core.ErrServerError
 	}
 
-	return playerHand, nil
+	return player, nil
 }
 
 func (c *CardService) drawCardFromDeckToUser(
