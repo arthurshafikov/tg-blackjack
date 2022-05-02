@@ -66,6 +66,10 @@ func (c Card) GetValue() int {
 	return value
 }
 
+func (c Card) ToString() string {
+	return "*" + string(c) + "*"
+}
+
 func trimLeftChars(s string, n int) string {
 	m := 0
 	for i := range s {

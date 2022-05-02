@@ -1,9 +1,13 @@
 Messages:
   ChatNotExists: "Chat is not registered! Type /start command to register."
   ChatCreatedSuccessfully: "Chat was created successfully!"
+  ChatHasActiveGame: "Chat already has active game! Please type /draw or wait until active game is over."
 
   PlayerCantDraw: "*You cannot draw more cards!*"
   PlayerHand: "@%s hand:"
   PlayerHandBusted: "*BUSTED!*"
+
+  DealerHand: "*Dealer* hand:"
+  GameEnterHint: "Type /draw command to enter the game."
 
   TopPlayers: "*Top* players:"

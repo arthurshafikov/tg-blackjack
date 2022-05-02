@@ -27,10 +27,14 @@ type DatabaseConfig struct {
 type Messages struct {
 	ChatNotExists           string
 	ChatCreatedSuccessfully string
+	ChatHasActiveGame       string
 
 	PlayerCantDraw   string
 	PlayerHand       string
 	PlayerHandBusted string
+
+	DealerHand    string
+	GameEnterHint string
 
 	TopPlayers string
 }

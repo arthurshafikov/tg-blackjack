@@ -23,7 +23,7 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	msgText += fmt.Sprintf(c.messages.PlayerHand+"\n", strings.Replace(message.From.UserName, "_", "\\_", -1))
 
 	for _, card := range player.Cards {
-		msgText += "*" + string(card) + "*  "
+		msgText += card.ToString() + " "
 	}
 
 	if player.Busted {
