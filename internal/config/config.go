@@ -28,6 +28,10 @@ type Messages struct {
 	ChatNotExists           string
 	ChatCreatedSuccessfully string
 
+	PlayerCantDraw   string
+	PlayerHand       string
+	PlayerHandBusted string
+
 	TopPlayers string
 }
 

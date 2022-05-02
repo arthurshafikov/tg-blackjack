@@ -2,4 +2,8 @@ Messages:
   ChatNotExists: "Chat not registered! Type /start command to register."
   ChatCreatedSuccessfully: "Chat was created successfully!"
 
+  PlayerCantDraw: "*You cannot draw more cards!*"
+  PlayerHand: "@%s hand:"
+  PlayerHandBusted: "*BUSTED!*"
+
   TopPlayers: "*Top* players:"
