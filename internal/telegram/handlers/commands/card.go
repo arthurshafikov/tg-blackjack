@@ -3,7 +3,6 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -20,7 +19,7 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 		}
 	}
 
-	msgText += fmt.Sprintf(c.messages.PlayerHand+"\n", strings.Replace(message.From.UserName, "_", "\\_", -1))
+	msgText += fmt.Sprintf(c.messages.PlayerHand+"\n", c.escapeUnderscoreUsername(message.From.UserName))
 
 	for _, card := range player.Cards {
 		msgText += card.ToString() + " "
@@ -33,5 +32,13 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
 	msg.ReplyToMessageID = message.MessageID
 
-	return c.sendMessage(msg)
+	if err := c.sendMessage(msg); err != nil {
+		return err
+	}
+
+	if err := c.finishGameIfNeeded(message); err != nil {
+		return err
+	}
+
+	return nil
 }

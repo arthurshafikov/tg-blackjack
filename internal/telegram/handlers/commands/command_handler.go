@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"strings"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/config"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
@@ -45,4 +46,8 @@ func (c *CommandHandler) sendMessage(msg tgbotapi.MessageConfig) error {
 	_, err := c.bot.Send(msg)
 
 	return err
+}
+
+func (c *CommandHandler) escapeUnderscoreUsername(username string) string {
+	return strings.Replace(username, "_", "\\_", -1)
 }
