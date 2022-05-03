@@ -41,24 +41,18 @@ func (g *Game) SetActiveGame(ctx context.Context, telegramChatID int64, game cor
 	return err
 }
 
-func (g *Game) FinishActiveGame(ctx context.Context, telegramChatID int64) (core.Game, error) {
-	var chat core.Chat
-
+func (g *Game) NullActiveGame(ctx context.Context, telegramChatID int64) error {
 	filter := bson.M{"telegram_chat_id": telegramChatID}
 	update := bson.M{"$set": bson.M{"active_game": nil}}
-	res := g.collection.FindOneAndUpdate(ctx, filter, update)
-	if err := res.Err(); err != nil {
+	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return chat.ActiveGame, core.ErrNotFound
+			return core.ErrNotFound
 		}
-		return chat.ActiveGame, err
+
+		return err
 	}
 
-	if err := res.Decode(&chat); err != nil {
-		return chat.ActiveGame, err
-	}
-
-	return chat.ActiveGame, nil
+	return nil
 }
 
 func (g *Game) GetActiveGame(ctx context.Context, telegramChatID int64) (core.Game, error) {

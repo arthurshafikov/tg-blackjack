@@ -40,26 +40,31 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 	}
 
 	if gameShouldBeFinished {
-		msgText := "Game over! Here is the statistics:\n"
-		gameStats, err := c.services.Games.FinishGame(c.ctx, message.Chat.ID)
+		game, gameStats, err := c.services.Games.FinishGame(c.ctx, message.Chat.ID)
 		if err != nil {
 			return err
 		}
+
+		msgText := c.messages.GameOver + "\n\n" + c.messages.DealerHand + "\n"
+		for _, card := range game.Dealer {
+			msgText += card.ToString() + " "
+		}
+		msgText += "\n"
 
 		for username, result := range gameStats {
 			var resultText string
 			switch result {
 			case -1:
-				resultText = "Lose"
+				resultText = c.messages.Lose
 			case 0:
-				resultText = "Push"
+				resultText = c.messages.Push
 			case 1:
-				resultText = "Win"
+				resultText = c.messages.Win
 			default:
 				log.Println("wrong value for result")
 			}
 
-			msgText += fmt.Sprintf("\n@%s - *%s*", c.escapeUnderscoreUsername(username), resultText)
+			msgText += fmt.Sprintf("\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
 		}
 
 		return c.sendMessage(tgbotapi.NewMessage(message.Chat.ID, msgText))

@@ -30,6 +30,11 @@ type Messages struct {
 	ChatHasActiveGame       string
 	ChatHasNoActiveGame     string
 
+	GameOver string
+	Win      string
+	Lose     string
+	Push     string
+
 	PlayerCantDraw   string
 	PlayerHand       string
 	PlayerHandBusted string

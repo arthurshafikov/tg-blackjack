@@ -4,6 +4,11 @@ Messages:
   ChatHasActiveGame: "Chat already has active game! Please type /draw or wait until active game is over."
   ChatHasNoActiveGame: "Chat has no active game! Please type /new to start one."
 
+  GameOver: "*Game over!* Here is the statistics:"
+  Win: "*Win* (+1)"
+  Lose: "_Lose_ (-1)"
+  Push: "Push (0)"
+
   PlayerCantDraw: "*You cannot draw more cards!*"
   PlayerHand: "@%s hand:"
   PlayerHandBusted: "*BUSTED!*"

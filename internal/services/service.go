@@ -19,7 +19,7 @@ type Statistics interface {
 
 type Games interface {
 	NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
-	FinishGame(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error)
+	FinishGame(ctx context.Context, telegramChatID int64) (core.Game, core.UsersStatistics, error)
 	CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error)
 }
 

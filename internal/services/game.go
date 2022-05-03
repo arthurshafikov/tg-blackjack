@@ -83,19 +83,41 @@ func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramC
 	return result, nil
 }
 
-func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	game, err := g.repo.FinishActiveGame(ctx, telegramChatID)
+func (g *GameService) FinishGame(
+	ctx context.Context,
+	telegramChatID int64,
+) (core.Game, core.UsersStatistics, error) {
+	game, err := g.repo.GetActiveGame(ctx, telegramChatID)
 	if err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			g.logger.Error(err)
 
-			return nil, core.ErrServerError
+			return game, nil, core.ErrServerError
 		}
 
-		return nil, core.ErrNotFound
+		return game, nil, core.ErrNotFound
 	}
 
-	// todo dealer should draw cards, implement...
+	for game.Dealer.CountValue() < 17 {
+		card, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
+		if err != nil {
+			g.logger.Error(err)
+
+			return game, nil, core.ErrServerError
+		}
+		game.Dealer = append(game.Dealer, card)
+	}
+
+	if err := g.repo.NullActiveGame(ctx, telegramChatID); err != nil {
+		if !errors.Is(err, core.ErrNotFound) {
+			g.logger.Error(err)
+
+			return game, nil, core.ErrServerError
+		}
+
+		return game, nil, core.ErrNotFound
+	}
+
 	dealerValue := game.Dealer.CountValue()
 
 	gameResult := core.UsersStatistics{}
@@ -104,10 +126,11 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 		result := 0
 		playerValue := player.Cards.CountValue()
 
-		// todo implement blackjack logic
-		if playerValue < dealerValue {
+		dealerBuster := dealerValue > 21
+
+		if (playerValue < dealerValue && !dealerBuster) || player.Busted {
 			result = -1
-		} else if playerValue > dealerValue {
+		} else if playerValue > dealerValue || dealerBuster {
 			result = +1
 		}
 
@@ -117,8 +140,8 @@ func (g *GameService) FinishGame(ctx context.Context, telegramChatID int64) (cor
 	if err := g.statisticService.IncrementStatistic(ctx, telegramChatID, gameResult); err != nil {
 		g.logger.Error(err)
 
-		return nil, core.ErrServerError
+		return game, nil, core.ErrServerError
 	}
 
-	return gameResult, nil
+	return game, gameResult, nil
 }
