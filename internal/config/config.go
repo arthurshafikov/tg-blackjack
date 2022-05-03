@@ -28,6 +28,7 @@ type Messages struct {
 	ChatNotExists           string
 	ChatCreatedSuccessfully string
 	ChatHasActiveGame       string
+	ChatHasNoActiveGame     string
 
 	PlayerCantDraw   string
 	PlayerHand       string

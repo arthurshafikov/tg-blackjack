@@ -14,6 +14,8 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	if err != nil {
 		if errors.Is(err, core.ErrCantDraw) {
 			msgText += c.messages.PlayerCantDraw + "\n"
+		} else if errors.Is(err, core.ErrNoActiveGame) {
+			return fmt.Errorf(c.messages.ChatHasNoActiveGame)
 		} else if !errors.Is(err, core.ErrBusted) {
 			return err
 		}

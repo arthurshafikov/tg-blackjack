@@ -27,6 +27,10 @@ func (c *CardService) DrawCard(
 ) (*core.Player, error) {
 	player, err := c.repo.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
+		if errors.Is(err, core.ErrNoActiveGame) {
+			return player, core.ErrNoActiveGame
+		}
+
 		if !errors.Is(err, core.ErrNotFound) {
 			c.logger.Error(err)
 

@@ -131,6 +131,17 @@ func (g *Game) StopDrawing(ctx context.Context, telegramChatID int64, player *co
 }
 
 func (g *Game) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
+	err := g.collection.FindOne(ctx, bson.M{"$and": bson.A{
+		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{"active_game": nil},
+	}}).Err()
+	if err == nil {
+		return nil, core.ErrNoActiveGame
+	}
+	if !errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, err
+	}
+
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
 		bson.M{"active_game.players.username": username},

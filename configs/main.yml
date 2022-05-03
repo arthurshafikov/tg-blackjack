@@ -2,6 +2,7 @@ Messages:
   ChatNotExists: "Chat is not registered! Type /start command to register."
   ChatCreatedSuccessfully: "Chat was created successfully!"
   ChatHasActiveGame: "Chat already has active game! Please type /draw or wait until active game is over."
+  ChatHasNoActiveGame: "Chat has no active game! Please type /new to start one."
 
   PlayerCantDraw: "*You cannot draw more cards!*"
   PlayerHand: "@%s hand:"
