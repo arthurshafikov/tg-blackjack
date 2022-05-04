@@ -1,7 +1,6 @@
 package core
 
 import (
-	"log"
 	"math/rand"
 	"time"
 )
@@ -48,22 +47,33 @@ func NewCards() Cards {
 }
 
 func (cards Cards) CountValue() int {
-	var value int
+	possibleValues := []int{0}
 
 	for _, card := range cards {
-		value += card.GetValue()
+		cardLetter := trimLeftChars(string(card), 1)
+		for i := range possibleValues {
+			possibleValues[i] += CardValues[cardLetter]
+		}
+		if cardLetter == "A" {
+			copyPossibleValues := make([]int, len(possibleValues))
+			copy(copyPossibleValues, possibleValues)
+
+			for i := range copyPossibleValues {
+				copyPossibleValues[i] += 10
+			}
+
+			possibleValues = append(possibleValues, copyPossibleValues...)
+		}
 	}
 
-	return value
-}
-
-func (c Card) GetValue() int {
-	value, ok := CardValues[trimLeftChars(string(c), 1)]
-	if !ok {
-		log.Printf("wrong value for card %s", c)
+	bestValue := possibleValues[0]
+	for _, value := range possibleValues {
+		if value > bestValue && value <= 21 {
+			bestValue = value
+		}
 	}
 
-	return value
+	return bestValue
 }
 
 func (c Card) ToString() string {
