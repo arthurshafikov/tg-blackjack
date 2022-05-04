@@ -59,6 +59,9 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 		if errors.Is(err, core.ErrBusted) {
 			return fmt.Errorf(c.messages.PlayerAlreadyBusted, c.escapeUnderscoreUsername(player.Username))
 		}
+		if errors.Is(err, core.ErrNoActiveGame) {
+			return fmt.Errorf(c.messages.ChatHasNoActiveGame)
+		}
 
 		return err
 	}
