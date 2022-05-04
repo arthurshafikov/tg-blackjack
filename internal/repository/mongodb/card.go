@@ -169,6 +169,19 @@ func (g *Game) GetPlayer(ctx context.Context, telegramChatID int64, username str
 	return nil, core.ErrNotFound
 }
 
+func (g *Game) CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error) {
+	player, err := g.GetPlayer(ctx, telegramChatID, username)
+	if err != nil {
+		return false, err
+	}
+
+	if player.Busted {
+		return false, core.ErrBusted
+	}
+
+	return player.Stop, nil
+}
+
 func (g *Game) setNewDeck(ctx context.Context, telegramChatID int64) (core.Deck, error) {
 	deck := *core.NewDeck()
 	filter := bson.M{"telegram_chat_id": telegramChatID}

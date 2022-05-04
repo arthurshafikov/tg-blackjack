@@ -44,3 +44,37 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 
 	return nil
 }
+
+func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
+	var msgText string
+
+	player := core.Player{
+		Username: message.From.UserName,
+		Stop:     true,
+	}
+	if err := c.services.Cards.StopDrawing(c.ctx, message.Chat.ID, &player); err != nil {
+		if errors.Is(err, core.ErrAlreadyStopped) {
+			return fmt.Errorf(c.messages.PlayerAlreadyStopped, c.escapeUnderscoreUsername(player.Username))
+		}
+		if errors.Is(err, core.ErrBusted) {
+			return fmt.Errorf(c.messages.PlayerAlreadyBusted, c.escapeUnderscoreUsername(player.Username))
+		}
+
+		return err
+	}
+
+	msgText += fmt.Sprintf(c.messages.StoppedDrawing+"\n", c.escapeUnderscoreUsername(message.From.UserName))
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
+	msg.ReplyToMessageID = message.MessageID
+
+	if err := c.sendMessage(msg); err != nil {
+		return err
+	}
+
+	if err := c.finishGameIfNeeded(message); err != nil {
+		return err
+	}
+
+	return nil
+}

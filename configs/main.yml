@@ -12,6 +12,9 @@ Messages:
   PlayerCantDraw: "*You cannot draw more cards!*"
   PlayerHand: "@%s hand:"
   PlayerHandBusted: "*BUSTED!*"
+  PlayerAlreadyStopped: "@%s, you are already stopped drawing cards."
+  PlayerAlreadyBusted: "@%s, you are busted."
+  StoppedDrawing: "@%s stopped drawing! Waiting for other players to stop or to get *busted*..."
 
   DealerHand: "*Dealer* hand:"
   GameEnterHint: "Type /draw command to enter the game."

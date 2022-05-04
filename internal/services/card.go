@@ -96,6 +96,14 @@ func (c *CardService) StopDrawing(
 	telegramChatID int64,
 	player *core.Player,
 ) error {
+	playerStopped, err := c.repo.CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username)
+	if err != nil {
+		return err
+	}
+	if playerStopped {
+		return core.ErrAlreadyStopped
+	}
+
 	if err := c.repo.StopDrawing(ctx, telegramChatID, player); err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			c.logger.Error(err)

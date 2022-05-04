@@ -32,6 +32,7 @@ type Cards interface {
 	DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error)
 	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
 	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+	CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error)
 }
 
 type Repository struct {

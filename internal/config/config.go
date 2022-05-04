@@ -35,9 +35,12 @@ type Messages struct {
 	Lose     string
 	Push     string
 
-	PlayerCantDraw   string
-	PlayerHand       string
-	PlayerHandBusted string
+	PlayerCantDraw       string
+	PlayerHand           string
+	PlayerHandBusted     string
+	PlayerAlreadyStopped string
+	PlayerAlreadyBusted  string
+	StoppedDrawing       string
 
 	DealerHand    string
 	GameEnterHint string

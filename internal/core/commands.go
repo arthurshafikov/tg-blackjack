@@ -5,4 +5,5 @@ const (
 	StatsCommand = "stats"
 	NewGame      = "new"
 	DrawCard     = "draw"
+	StopDrawing  = "stop"
 )

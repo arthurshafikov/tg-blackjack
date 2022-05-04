@@ -15,6 +15,8 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 		return b.commandHandler.HandleNewGame(message)
 	case core.DrawCard:
 		return b.commandHandler.HandleDrawCard(message)
+	case core.StopDrawing:
+		return b.commandHandler.HandleStopDrawing(message)
 	}
 
 	return nil
