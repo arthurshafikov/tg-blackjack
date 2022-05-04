@@ -6,6 +6,7 @@ var (
 	ErrNotFound    = errors.New("404 Not Found")
 	ErrServerError = errors.New("500 Server Error")
 
+	ErrChatRegistered = errors.New("chat already registered")
 	ErrActiveGame     = errors.New("chat has active game")
 	ErrNoActiveGame   = errors.New("chat has no active game")
 	ErrDeckEmpty      = errors.New("deck is empty")

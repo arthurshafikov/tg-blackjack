@@ -25,6 +25,7 @@ type DatabaseConfig struct {
 }
 
 type Messages struct {
+	ChatAlreadyRegistered   string
 	ChatNotExists           string
 	ChatCreatedSuccessfully string
 	ChatHasActiveGame       string

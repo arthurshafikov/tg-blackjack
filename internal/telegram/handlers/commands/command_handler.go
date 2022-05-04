@@ -2,9 +2,12 @@ package commands
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/config"
+	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -33,6 +36,10 @@ func NewCommandHandler(
 
 func (c *CommandHandler) HandleStart(message *tgbotapi.Message) error {
 	if err := c.services.Chats.RegisterChat(c.ctx, message.Chat.ID); err != nil {
+		if errors.Is(err, core.ErrChatRegistered) {
+			return fmt.Errorf(c.messages.ChatAlreadyRegistered)
+		}
+
 		return err
 	}
 

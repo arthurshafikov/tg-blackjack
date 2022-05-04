@@ -35,6 +35,10 @@ func (c *ChatService) CheckChatExists(ctx context.Context, telegramChatID int64)
 }
 
 func (c *ChatService) RegisterChat(ctx context.Context, telegramChatID int64) error {
+	if err := c.CheckChatExists(ctx, telegramChatID); err == nil {
+		return core.ErrChatRegistered
+	}
+
 	if err := c.repo.RegisterChat(ctx, telegramChatID); err != nil {
 		c.logger.Error(err)
 
