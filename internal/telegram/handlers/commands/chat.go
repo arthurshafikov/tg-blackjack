@@ -16,7 +16,12 @@ func (c *CommandHandler) HandleStats(message *tgbotapi.Message) error {
 
 	sortedUserStats := stats.SortByValue()
 	for pos, userStats := range sortedUserStats {
-		msgText += fmt.Sprintf("*%v.* %s — %v points\n", pos+1, userStats.Username, userStats.Points)
+		msgText += fmt.Sprintf(
+			"*%v.* @%s — %v points\n",
+			pos+1,
+			c.escapeUnderscoreUsername(userStats.Username),
+			userStats.Points,
+		)
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
 
