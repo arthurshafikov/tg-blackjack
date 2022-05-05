@@ -56,7 +56,7 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 		Username: message.From.UserName,
 		Stop:     true,
 	}
-	if err := c.services.Cards.StopDrawing(c.ctx, message.Chat.ID, &player); err != nil {
+	if err := c.services.Players.StopDrawing(c.ctx, message.Chat.ID, &player); err != nil {
 		if errors.Is(err, core.ErrAlreadyStopped) {
 			return fmt.Errorf(c.messages.PlayerAlreadyStopped, c.escapeUnderscoreUsername(player.Username))
 		}

@@ -26,7 +26,12 @@ type Games interface {
 type Cards interface {
 	DrawCard(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
 	DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error)
+}
+
+type Players interface {
 	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
+	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
 }
 
 type Logger interface {
@@ -38,6 +43,7 @@ type Services struct {
 	Statistics
 	Games
 	Cards
+	Players
 }
 
 type Deps struct {
@@ -48,7 +54,8 @@ type Deps struct {
 func NewServices(deps Deps) *Services {
 	chats := NewChatService(deps.Logger, deps.Repository.Chats)
 	statistics := NewStatisticService(deps.Logger, deps.Repository.Statistic)
-	cards := NewCardService(deps.Logger, deps.Repository.Cards)
+	players := NewPlayerService(deps.Logger, deps.Repository.Players)
+	cards := NewCardService(deps.Logger, deps.Repository.Cards, players)
 	games := NewGameService(deps.Logger, deps.Repository.Games, statistics, cards)
 
 	return &Services{
@@ -56,5 +63,6 @@ func NewServices(deps Deps) *Services {
 		Statistics: statistics,
 		Games:      games,
 		Cards:      cards,
+		Players:    players,
 	}
 }

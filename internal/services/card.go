@@ -11,12 +11,16 @@ import (
 type CardService struct {
 	logger Logger
 	repo   repository.Cards
+
+	playerService Players
 }
 
-func NewCardService(logger Logger, repo repository.Cards) *CardService {
+func NewCardService(logger Logger, repo repository.Cards, playerService Players) *CardService {
 	return &CardService{
 		logger: logger,
 		repo:   repo,
+
+		playerService: playerService,
 	}
 }
 
@@ -25,7 +29,7 @@ func (c *CardService) DrawCard(
 	telegramChatID int64,
 	username string,
 ) (*core.Player, error) {
-	player, err := c.repo.GetPlayer(ctx, telegramChatID, username)
+	player, err := c.playerService.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
 		if errors.Is(err, core.ErrNoActiveGame) {
 			return player, core.ErrNoActiveGame
@@ -61,7 +65,7 @@ func (c *CardService) DrawCard(
 			player.Busted = false
 		}
 
-		if err := c.StopDrawing(ctx, telegramChatID, player); err != nil {
+		if err := c.playerService.StopDrawing(ctx, telegramChatID, player); err != nil {
 			c.logger.Error(err)
 
 			return nil, core.ErrServerError
@@ -91,32 +95,6 @@ func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChat
 	return card, nil
 }
 
-func (c *CardService) StopDrawing(
-	ctx context.Context,
-	telegramChatID int64,
-	player *core.Player,
-) error {
-	playerStopped, err := c.repo.CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username)
-	if err != nil {
-		return err
-	}
-	if playerStopped {
-		return core.ErrAlreadyStopped
-	}
-
-	if err := c.repo.StopDrawing(ctx, telegramChatID, player); err != nil {
-		if !errors.Is(err, core.ErrNotFound) {
-			c.logger.Error(err)
-
-			return core.ErrServerError
-		}
-
-		return core.ErrNotFound
-	}
-
-	return nil
-}
-
 func (c *CardService) createNewPlayer(
 	ctx context.Context,
 	telegramChatID int64,
@@ -138,7 +116,7 @@ func (c *CardService) createNewPlayer(
 		player.Stop = true
 	}
 
-	if err := c.repo.AddNewPlayer(ctx, telegramChatID, *player); err != nil {
+	if err := c.playerService.AddNewPlayer(ctx, telegramChatID, *player); err != nil {
 		c.logger.Error(err)
 
 		return nil, core.ErrServerError
@@ -152,7 +130,7 @@ func (c *CardService) drawCardFromDeckToUser(
 	telegramChatID int64,
 	username string,
 ) (core.Card, error) {
-	card, err := c.repo.DrawCard(ctx, telegramChatID) // empty deck?
+	card, err := c.repo.DrawCard(ctx, telegramChatID)
 	if err != nil {
 		return card, err
 	}
