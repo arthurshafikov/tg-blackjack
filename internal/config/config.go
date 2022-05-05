@@ -31,11 +31,12 @@ type Messages struct {
 	ChatHasActiveGame       string
 	ChatHasNoActiveGame     string
 
-	Blackjack string
-	GameOver  string
-	Win       string
-	Lose      string
-	Push      string
+	Blackjack       string
+	GameOver        string
+	Win             string
+	Lose            string
+	Push            string
+	BlackjackResult string
 
 	PlayerCantDraw       string
 	PlayerHand           string

@@ -66,6 +66,8 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 				resultText = c.messages.Push
 			case 1:
 				resultText = c.messages.Win
+			case 2:
+				resultText = c.messages.BlackjackResult
 			default:
 				log.Println("wrong value for result")
 			}

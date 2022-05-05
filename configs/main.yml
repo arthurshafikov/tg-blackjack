@@ -10,6 +10,7 @@ Messages:
   Win: "*Win* (+1)"
   Lose: "_Lose_ (-1)"
   Push: "Push (0)"
+  BlackjackResult: "*Blackjack* (+2)"
 
   PlayerCantDraw: "*You cannot draw more cards!*"
   PlayerHand: "@%s hand:"
