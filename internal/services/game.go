@@ -135,6 +135,10 @@ func (g *GameService) FinishGame(
 			result = +1
 		}
 
+		if player.Cards.IsBlackjack() && !game.Dealer.IsBlackjack() {
+			result = +2
+		}
+
 		gameResult[player.Username] = result
 	}
 
