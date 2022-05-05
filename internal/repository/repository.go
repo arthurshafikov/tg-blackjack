@@ -27,9 +27,12 @@ type Games interface {
 type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error
-	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
 	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
 	DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error)
+}
+
+type Players interface {
+	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
 	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
 	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
 	CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error)
@@ -40,6 +43,7 @@ type Repository struct {
 	Statistic
 	Games
 	Cards
+	Players
 }
 
 func NewRepository(db *mongo.Client) *Repository {
@@ -49,6 +53,7 @@ func NewRepository(db *mongo.Client) *Repository {
 		Chats:     mongodb.NewChat(chatsCollection),
 		Statistic: mongodb.NewStatistic(chatsCollection),
 		Games:     mongodb.NewGame(chatsCollection),
-		Cards:     mongodb.NewGame(chatsCollection),
+		Cards:     mongodb.NewCard(chatsCollection),
+		Players:   mongodb.NewPlayer(chatsCollection),
 	}
 }
