@@ -21,6 +21,10 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 		}
 	}
 
+	if player.Cards.IsBlackjack() {
+		msgText += c.messages.Blackjack + "\n"
+	}
+
 	msgText += fmt.Sprintf(c.messages.PlayerHand+"\n", c.escapeUnderscoreUsername(message.From.UserName))
 
 	for _, card := range player.Cards {

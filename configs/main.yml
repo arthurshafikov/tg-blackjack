@@ -5,6 +5,7 @@ Messages:
   ChatHasActiveGame: "Chat already has active game! Please type /draw or wait until active game is over."
   ChatHasNoActiveGame: "Chat has no active game! Please type /new to start one."
 
+  Blackjack: "*BLACKJACK!*"
   GameOver: "*Game over!* Here is the statistics:"
   Win: "*Win* (+1)"
   Lose: "_Lose_ (-1)"
@@ -18,6 +19,7 @@ Messages:
   StoppedDrawing: "@%s stopped drawing! Waiting for other players to stop or to get *busted*..."
 
   DealerHand: "*Dealer* hand:"
+  DealerBlackjack: "*Dealer* has *BLACKJACK!*"
   GameEnterHint: "Type /draw command to enter the game."
 
   TopPlayers: "*Top* players:"

@@ -133,6 +133,11 @@ func (c *CardService) createNewPlayer(
 		Username: username,
 		Cards:    playerCards,
 	}
+
+	if playerCards.IsBlackjack() {
+		player.Stop = true
+	}
+
 	if err := c.repo.AddNewPlayer(ctx, telegramChatID, *player); err != nil {
 		c.logger.Error(err)
 

@@ -76,6 +76,10 @@ func (cards Cards) CountValue() int {
 	return bestValue
 }
 
+func (cards Cards) IsBlackjack() bool {
+	return cards.CountValue() == 21 && len(cards) == 2
+}
+
 func (c Card) ToString() string {
 	return "*" + string(c) + "*"
 }

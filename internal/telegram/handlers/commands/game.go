@@ -45,11 +45,17 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 			return err
 		}
 
-		msgText := c.messages.GameOver + "\n\n" + c.messages.DealerHand + "\n"
+		msgText := c.messages.GameOver + "\n\n"
+		if game.Dealer.IsBlackjack() {
+			msgText += c.messages.DealerBlackjack
+		} else {
+			msgText += c.messages.DealerHand
+		}
+		msgText += "\n"
+
 		for _, card := range game.Dealer {
 			msgText += card.ToString() + " "
 		}
-		msgText += "\n"
 
 		for username, result := range gameStats {
 			var resultText string
@@ -64,7 +70,7 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 				log.Println("wrong value for result")
 			}
 
-			msgText += fmt.Sprintf("\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
+			msgText += fmt.Sprintf("\n\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
 		}
 
 		msgText += fmt.Sprintf("\n\n Type /%s to start a new game", core.NewGame)

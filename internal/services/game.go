@@ -119,6 +119,7 @@ func (g *GameService) FinishGame(
 	}
 
 	dealerValue := game.Dealer.CountValue()
+	dealerBusted := dealerValue > 21
 
 	gameResult := core.UsersStatistics{}
 
@@ -126,11 +127,11 @@ func (g *GameService) FinishGame(
 		result := 0
 		playerValue := player.Cards.CountValue()
 
-		dealerBuster := dealerValue > 21
-
-		if (playerValue < dealerValue && !dealerBuster) || player.Busted {
+		if game.Dealer.IsBlackjack() && !player.Cards.IsBlackjack() {
 			result = -1
-		} else if playerValue > dealerValue || dealerBuster {
+		} else if (playerValue < dealerValue && !dealerBusted) || player.Busted {
+			result = -1
+		} else if playerValue > dealerValue || dealerBusted {
 			result = +1
 		}
 
