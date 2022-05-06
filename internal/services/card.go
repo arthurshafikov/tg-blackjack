@@ -134,9 +134,6 @@ func (c *CardService) drawCardFromDeckToUser(
 	if err != nil {
 		return card, err
 	}
-	if err := c.repo.AddCardToPlayer(ctx, telegramChatID, username, card); err != nil {
-		return card, err
-	}
 
-	return card, nil
+	return card, c.repo.AddCardToPlayer(ctx, telegramChatID, username, card)
 }
