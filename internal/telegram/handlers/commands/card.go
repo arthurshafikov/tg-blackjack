@@ -12,11 +12,14 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	var msgText string
 	player, err := c.services.Cards.DrawCard(c.ctx, message.Chat.ID, message.From.UserName)
 	if err != nil {
-		if errors.Is(err, core.ErrCantDraw) {
+		switch err { //nolint
+		case core.ErrCantDraw:
 			msgText += c.messages.PlayerCantDraw + "\n"
-		} else if errors.Is(err, core.ErrNoActiveGame) {
+		case core.ErrNoActiveGame:
 			return fmt.Errorf(c.messages.ChatHasNoActiveGame)
-		} else if !errors.Is(err, core.ErrBusted) {
+		case core.ErrBusted:
+			break
+		default:
 			return err
 		}
 	}

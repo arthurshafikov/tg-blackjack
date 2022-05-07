@@ -14,7 +14,7 @@ func (d *Deck) IsEmpty() bool {
 	return len(d.Cards) < 1
 }
 
-// todo test for concurrency
+// todo test for concurrency.
 func (d *Deck) DrawCards(amount int) (Cards, error) {
 	var drawedCards Cards
 	deckLength := len(d.Cards)

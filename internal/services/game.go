@@ -127,7 +127,7 @@ func (g *GameService) FinishGame(
 		result := 0
 		playerValue := player.Cards.CountValue()
 
-		if game.Dealer.IsBlackjack() && !player.Cards.IsBlackjack() {
+		if game.Dealer.IsBlackjack() && !player.Cards.IsBlackjack() { //nolint
 			result = -1
 		} else if (playerValue < dealerValue && !dealerBusted) || player.Busted {
 			result = -1

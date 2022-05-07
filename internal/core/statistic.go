@@ -4,15 +4,15 @@ import "sort"
 
 type UsersStatistics map[string]int
 
-type sortedUserStatistics []userStatistics
+type SortedUserStatistics []userStatistics
 
 type userStatistics struct {
 	Username string
 	Points   int
 }
 
-func (u UsersStatistics) SortByValue() sortedUserStatistics {
-	var sortedUserStats sortedUserStatistics
+func (u UsersStatistics) SortByValue() SortedUserStatistics {
+	var sortedUserStats SortedUserStatistics //nolint
 	for username, points := range u {
 		sortedUserStats = append(sortedUserStats, userStatistics{
 			Username: username,

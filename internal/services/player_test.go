@@ -11,11 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	player = &core.Player{
-		Username: username,
-	}
-)
+var player = &core.Player{
+	Username: username,
+}
 
 func getPlayerServiceDependencies(t *testing.T) (
 	context.Context,

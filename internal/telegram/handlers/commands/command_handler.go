@@ -56,5 +56,5 @@ func (c *CommandHandler) sendMessage(msg tgbotapi.MessageConfig) error {
 }
 
 func (c *CommandHandler) escapeUnderscoreUsername(username string) string {
-	return strings.Replace(username, "_", "\\_", -1)
+	return strings.ReplaceAll(username, "_", "\\_")
 }
