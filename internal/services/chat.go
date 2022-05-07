@@ -42,7 +42,7 @@ func (c *ChatService) RegisterChat(ctx context.Context, telegramChatID int64) er
 	if err := c.repo.RegisterChat(ctx, telegramChatID); err != nil {
 		c.logger.Error(err)
 
-		return core.ErrNotFound
+		return core.ErrServerError
 	}
 
 	return nil
