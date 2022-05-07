@@ -52,5 +52,15 @@ func (s *StatisticService) IncrementStatistic(
 		stats[username] += result
 	}
 
-	return s.repo.SetStatistics(ctx, telegramChatID, stats)
+	if err := s.repo.SetStatistics(ctx, telegramChatID, stats); err != nil {
+		if !errors.Is(err, core.ErrNotFound) {
+			s.logger.Error(err)
+
+			return core.ErrServerError
+		}
+
+		return core.ErrNotFound
+	}
+
+	return nil
 }
