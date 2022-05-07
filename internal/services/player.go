@@ -27,7 +27,9 @@ func (p *PlayerService) StopDrawing(
 ) error {
 	playerStopped, err := p.repo.CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username)
 	if err != nil {
-		return err
+		p.logger.Error(err)
+
+		return core.ErrServerError
 	}
 	if playerStopped {
 		return core.ErrAlreadyStopped
@@ -47,9 +49,26 @@ func (p *PlayerService) StopDrawing(
 }
 
 func (p *PlayerService) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
-	return p.repo.GetPlayer(ctx, telegramChatID, username)
+	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
+	if err != nil {
+		if !errors.Is(err, core.ErrNotFound) {
+			p.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+
+		return nil, core.ErrNotFound
+	}
+
+	return player, nil
 }
 
 func (p *PlayerService) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
-	return p.repo.AddNewPlayer(ctx, telegramChatID, player)
+	if err := p.repo.AddNewPlayer(ctx, telegramChatID, player); err != nil {
+		p.logger.Error(err)
+
+		return core.ErrServerError
+	}
+
+	return nil
 }
