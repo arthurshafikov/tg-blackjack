@@ -35,9 +35,11 @@ type Cards []Card
 func NewCards() Cards {
 	cards := Cards{}
 
-	for v := range CardValues {
-		for _, s := range CardSymbols {
-			cards = append(cards, Card(s+v))
+	for i := 0; i < 6; i++ { // todo config.
+		for v := range CardValues {
+			for _, s := range CardSymbols {
+				cards = append(cards, Card(s+v))
+			}
 		}
 	}
 	rand.Seed(time.Now().UnixNano())
