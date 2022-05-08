@@ -1,6 +1,9 @@
 package core
 
+import "sync"
+
 type Deck struct {
+	mu    sync.Mutex
 	Cards Cards `bson:"cards"`
 }
 
@@ -14,8 +17,9 @@ func (d *Deck) IsEmpty() bool {
 	return len(d.Cards) < 1
 }
 
-// todo test for concurrency.
 func (d *Deck) DrawCards(amount int) (Cards, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	var drawedCards Cards
 	deckLength := len(d.Cards)
 	if deckLength < 1 {
@@ -37,9 +41,9 @@ func (d *Deck) DrawCard() (Card, error) {
 
 	cards, err := d.DrawCards(1)
 	if err != nil {
-		return card, nil
+		return card, err
 	}
-	card = cards[len(cards)-1]
+	card = cards[0]
 
 	return card, nil
 }
