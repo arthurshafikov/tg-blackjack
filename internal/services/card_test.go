@@ -16,7 +16,7 @@ var (
 	username                 = "some_user"
 	cards                    = core.Cards{"♣10", "♥2"}
 	blackjack                = core.Cards{"♣10", "♥A"}
-	newCard        core.Card = "♣5"
+	new5Card       core.Card = "♣5"
 	newKCard       core.Card = "♣K"
 	new9Card       core.Card = "♣9"
 )
@@ -49,10 +49,10 @@ func TestDrawCard(t *testing.T) {
 			Username: username,
 			Cards:    cards,
 		}, nil),
-		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(newCard, nil),
-		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, newCard).Return(nil),
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new5Card, nil),
+		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new5Card).Return(nil),
 	)
-	expected.Cards = append(expected.Cards, newCard)
+	expected.Cards = append(expected.Cards, new5Card)
 	service := NewCardService(logger, repo, playerServiceMock)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
@@ -115,13 +115,13 @@ func TestDrawCardBustedCase(t *testing.T) {
 	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
 	expected := &core.Player{
 		Username: username,
-		Cards:    append(cards, core.Cards{newCard, newKCard}...),
+		Cards:    append(cards, core.Cards{new5Card, newKCard}...),
 		Stop:     true,
 		Busted:   true,
 	}
 	player := &core.Player{
 		Username: username,
-		Cards:    append(cards, newCard),
+		Cards:    append(cards, new5Card),
 	}
 	gomock.InOrder(
 		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(player, nil),
