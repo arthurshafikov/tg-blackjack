@@ -27,9 +27,13 @@ func (p *PlayerService) StopDrawing(
 ) error {
 	playerStopped, err := p.repo.CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username)
 	if err != nil {
-		p.logger.Error(err)
+		if !errors.Is(err, core.ErrNotFound) && !errors.Is(err, core.ErrNoActiveGame) {
+			p.logger.Error(err)
 
-		return core.ErrServerError
+			return core.ErrServerError
+		}
+
+		return err
 	}
 	if playerStopped {
 		return core.ErrAlreadyStopped
@@ -51,13 +55,13 @@ func (p *PlayerService) StopDrawing(
 func (p *PlayerService) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
 	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
-		if !errors.Is(err, core.ErrNotFound) {
+		if !errors.Is(err, core.ErrNotFound) && !errors.Is(err, core.ErrNoActiveGame) {
 			p.logger.Error(err)
 
 			return nil, core.ErrServerError
 		}
 
-		return nil, core.ErrNotFound
+		return nil, err
 	}
 
 	return player, nil

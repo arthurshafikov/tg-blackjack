@@ -18,7 +18,7 @@ func TestNewCards(t *testing.T) {
 }
 
 func TestCountValue(t *testing.T) {
-	var testCases = []testCase{
+	testCases := []testCase{
 		{
 			Input:  Cards{"♣5", "♦Q", "♥K", "♠J"},
 			Output: 35,
@@ -47,7 +47,7 @@ func TestCountValue(t *testing.T) {
 }
 
 func TestIsBlackjack(t *testing.T) {
-	var testCases = []testCase{
+	testCases := []testCase{
 		{
 			Input:  Cards{"♣5", "♦Q", "♥K", "♠J"},
 			Output: false,
