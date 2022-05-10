@@ -10,6 +10,12 @@ func NewDeck() *Deck {
 	}
 }
 
+func NewDeckWithCards(cards Cards) *Deck {
+	return &Deck{
+		Cards: cards,
+	}
+}
+
 func (d *Deck) IsEmpty() bool {
 	return len(d.Cards) < 1
 }

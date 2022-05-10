@@ -99,8 +99,8 @@ func (c *Card) DrawCards(ctx context.Context, telegramChatID int64, amount int) 
 	return cards, nil
 }
 
-func (c *Card) setNewDeck(ctx context.Context, telegramChatID int64) (core.Deck, error) {
-	deck := *core.NewDeck()
+func (c *Card) setNewDeck(ctx context.Context, telegramChatID int64) (*core.Deck, error) {
+	deck := core.NewDeck()
 	filter := bson.M{"telegram_chat_id": telegramChatID}
 	update := bson.M{"$set": bson.M{"deck": deck}}
 
