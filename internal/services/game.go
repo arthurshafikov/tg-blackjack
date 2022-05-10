@@ -86,7 +86,7 @@ func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramC
 func (g *GameService) FinishGame(
 	ctx context.Context,
 	telegramChatID int64,
-) (core.Game, core.UsersStatistics, error) {
+) (*core.Game, core.UsersStatistics, error) {
 	game, err := g.repo.GetActiveGame(ctx, telegramChatID)
 	if err != nil {
 		if !errors.Is(err, core.ErrNotFound) {

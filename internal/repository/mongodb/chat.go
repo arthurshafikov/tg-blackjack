@@ -40,7 +40,6 @@ func (c *Chat) RegisterChat(ctx context.Context, telegramChatID int64) error {
 	}
 	chat := core.Chat{
 		TelegramChatID: telegramChatID,
-		ActiveGame:     core.Game{},
 		Statistics:     core.UsersStatistics{},
 		Deck:           *core.NewDeck(),
 	}

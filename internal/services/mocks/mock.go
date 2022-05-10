@@ -154,10 +154,10 @@ func (mr *MockGamesMockRecorder) CheckIfGameShouldBeFinished(ctx, telegramChatID
 }
 
 // FinishGame mocks base method.
-func (m *MockGames) FinishGame(ctx context.Context, telegramChatID int64) (core.Game, core.UsersStatistics, error) {
+func (m *MockGames) FinishGame(ctx context.Context, telegramChatID int64) (*core.Game, core.UsersStatistics, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FinishGame", ctx, telegramChatID)
-	ret0, _ := ret[0].(core.Game)
+	ret0, _ := ret[0].(*core.Game)
 	ret1, _ := ret[1].(core.UsersStatistics)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2

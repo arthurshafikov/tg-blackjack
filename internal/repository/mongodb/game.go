@@ -55,7 +55,7 @@ func (g *Game) NullActiveGame(ctx context.Context, telegramChatID int64) error {
 	return nil
 }
 
-func (g *Game) GetActiveGame(ctx context.Context, telegramChatID int64) (core.Game, error) {
+func (g *Game) GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
 	var chat core.Chat
 
 	filter := bson.M{"telegram_chat_id": telegramChatID}

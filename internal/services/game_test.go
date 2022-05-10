@@ -121,7 +121,7 @@ func TestNewGameDrawToDealerCausedServerError(t *testing.T) {
 func TestCheckIfGameShouldBeFinished(t *testing.T) {
 	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(game, nil),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&game, nil),
 	)
 	service := NewGameService(logger, repo, stats, cards)
 
@@ -137,7 +137,7 @@ func TestCheckIfGameShouldBeFinishedActivePlayers(t *testing.T) {
 		Stop: false,
 	})
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(game, nil),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&game, nil),
 	)
 	service := NewGameService(logger, repo, stats, cards)
 
@@ -149,7 +149,7 @@ func TestCheckIfGameShouldBeFinishedActivePlayers(t *testing.T) {
 func TestCheckIfGameShouldBeFinishedServerError(t *testing.T) {
 	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(emptyGame, core.ErrServerError),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&emptyGame, core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
 	service := NewGameService(logger, repo, stats, cards)
@@ -170,7 +170,7 @@ func TestFinishGame(t *testing.T) {
 		"some_21_user":        1,
 	}
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(game, nil),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&game, nil),
 		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Return(new9Card, nil),
 		repo.EXPECT().NullActiveGame(ctx, telegramChatID).Return(nil),
 		stats.EXPECT().IncrementStatistic(ctx, telegramChatID, expectedStats).Return(nil),
@@ -179,7 +179,7 @@ func TestFinishGame(t *testing.T) {
 
 	resultGame, resultStats, err := service.FinishGame(ctx, telegramChatID)
 	require.NoError(t, err)
-	require.Equal(t, expectedGame, resultGame)
+	require.Equal(t, expectedGame, *resultGame)
 	require.Equal(t, expectedStats, resultStats)
 }
 
@@ -195,7 +195,7 @@ func TestFinishGameDealerHasBlackJack(t *testing.T) {
 		"some_21_user":        -1,
 	}
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(game, nil),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&game, nil),
 		repo.EXPECT().NullActiveGame(ctx, telegramChatID).Return(nil),
 		stats.EXPECT().IncrementStatistic(ctx, telegramChatID, expectedStats).Return(nil),
 	)
@@ -203,7 +203,7 @@ func TestFinishGameDealerHasBlackJack(t *testing.T) {
 
 	resultGame, resultStats, err := service.FinishGame(ctx, telegramChatID)
 	require.NoError(t, err)
-	require.Equal(t, expectedGame, resultGame)
+	require.Equal(t, expectedGame, *resultGame)
 	require.Equal(t, expectedStats, resultStats)
 }
 
@@ -220,7 +220,7 @@ func TestFinishGameDealerBusted(t *testing.T) {
 		"some_21_user":        1,
 	}
 	gomock.InOrder(
-		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(game, nil),
+		repo.EXPECT().GetActiveGame(ctx, telegramChatID).Return(&game, nil),
 		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Return(newKCard, nil),
 		repo.EXPECT().NullActiveGame(ctx, telegramChatID).Return(nil),
 		stats.EXPECT().IncrementStatistic(ctx, telegramChatID, expectedStats).Return(nil),
@@ -229,6 +229,6 @@ func TestFinishGameDealerBusted(t *testing.T) {
 
 	resultGame, resultStats, err := service.FinishGame(ctx, telegramChatID)
 	require.NoError(t, err)
-	require.Equal(t, expectedGame, resultGame)
+	require.Equal(t, expectedGame, *resultGame)
 	require.Equal(t, expectedStats, resultStats)
 }

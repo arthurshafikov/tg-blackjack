@@ -21,7 +21,7 @@ type Statistic interface {
 type Games interface {
 	SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error
 	NullActiveGame(ctx context.Context, telegramChatID int64) error
-	GetActiveGame(ctx context.Context, telegramChatID int64) (core.Game, error)
+	GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
 }
 
 type Cards interface {
