@@ -1,6 +1,9 @@
 package core
 
+import "sync"
+
 type Deck struct {
+	mu    sync.Mutex
 	Cards Cards `bson:"cards"`
 }
 
@@ -33,6 +36,8 @@ func (d *Deck) DrawCard() (Card, error) {
 }
 
 func (d *Deck) drawCards(amount int) (Cards, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	var drawedCards Cards
 	deckLength := len(d.Cards)
 	if deckLength < 1 {

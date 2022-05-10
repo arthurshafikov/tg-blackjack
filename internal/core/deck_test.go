@@ -1,6 +1,7 @@
 package core
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -40,4 +41,27 @@ func TestDrawCardsEmptyDeck(t *testing.T) {
 	result, err := deck.drawCards(4)
 	require.ErrorIs(t, err, ErrDeckEmpty)
 	require.Equal(t, expected, result)
+}
+
+func TestConcurrencyDrawCard(t *testing.T) {
+	cards := NewCards()
+	deckLength := len(cards)
+	deck := Deck{
+		Cards: cards,
+	}
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			for j := 0; j < 5; j++ {
+				_, err := deck.DrawCard()
+				require.NoError(t, err)
+			}
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	require.Len(t, deck.Cards, deckLength-50)
 }
