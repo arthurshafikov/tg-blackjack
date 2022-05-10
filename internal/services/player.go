@@ -25,7 +25,7 @@ func (p *PlayerService) StopDrawing(
 	telegramChatID int64,
 	player *core.Player,
 ) error {
-	playerStopped, err := p.repo.CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username)
+	playerStopped, err := p.checkIfPlayerIsStopped(ctx, telegramChatID, player.Username)
 	if err != nil {
 		if !errors.Is(err, core.ErrNotFound) && !errors.Is(err, core.ErrNoActiveGame) {
 			p.logger.Error(err)
@@ -75,4 +75,17 @@ func (p *PlayerService) AddNewPlayer(ctx context.Context, telegramChatID int64, 
 	}
 
 	return nil
+}
+
+func (p *PlayerService) checkIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error) {
+	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
+	if err != nil {
+		return false, err
+	}
+
+	if player.Busted {
+		return false, core.ErrBusted
+	}
+
+	return player.Stop, nil
 }

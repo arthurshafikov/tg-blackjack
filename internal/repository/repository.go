@@ -35,7 +35,6 @@ type Players interface {
 	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
 	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
 	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
-	CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error)
 }
 
 type Repository struct {

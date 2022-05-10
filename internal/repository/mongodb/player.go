@@ -92,16 +92,3 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 
 	return nil, core.ErrNotFound
 }
-
-func (p *Player) CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error) {
-	player, err := p.GetPlayer(ctx, telegramChatID, username)
-	if err != nil {
-		return false, err
-	}
-
-	if player.Busted {
-		return false, core.ErrBusted
-	}
-
-	return player.Stop, nil
-}
