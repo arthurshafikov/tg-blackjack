@@ -1,7 +1,7 @@
 Messages:
   ChatAlreadyRegistered: "Chat already registered! Type /new command to play."
   ChatNotExists: "Chat is not registered! Type /start command to register."
-  ChatCreatedSuccessfully: "Chat was created successfully!"
+  ChatCreatedSuccessfully: "Chat was created successfully! Type /new command to start the game."
   ChatHasActiveGame: "Chat already has active game! Please type /draw or wait until active game is over."
   ChatHasNoActiveGame: "Chat has no active game! Please type /new to start one."
 
