@@ -8,16 +8,21 @@ import (
 )
 
 type Config struct {
-	DatabaseConfig    `mapstructure:",squash"`
-	TelegramBotConfig `mapstructure:",squash"`
+	App
+	TelegramBot `mapstructure:",squash"`
+	Database    `mapstructure:",squash"`
 	Messages
 }
 
-type TelegramBotConfig struct {
+type App struct {
+	NumOfDecks int
+}
+
+type TelegramBot struct {
 	APIKey string `mapstructure:"BOT_API_KEY"`
 }
 
-type DatabaseConfig struct {
+type Database struct {
 	Scheme   string `mapstructure:"MONGODB_SCHEME"`
 	Host     string `mapstructure:"MONGODB_HOST"`
 	Username string `mapstructure:"MONGODB_USER"`
@@ -88,9 +93,9 @@ func (c *Config) readEnvVarsFromFile(envPath string) {
 }
 
 func (c *Config) readEnvVarsFromSystem() {
-	c.DatabaseConfig.Scheme = os.Getenv("MONGODB_SCHEME")
-	c.DatabaseConfig.Host = os.Getenv("MONGODB_HOST")
-	c.DatabaseConfig.Username = os.Getenv("MONGODB_USER")
-	c.DatabaseConfig.Password = os.Getenv("MONGODB_PASSWORD")
-	c.TelegramBotConfig.APIKey = os.Getenv("BOT_API_KEY")
+	c.Database.Scheme = os.Getenv("MONGODB_SCHEME")
+	c.Database.Host = os.Getenv("MONGODB_HOST")
+	c.Database.Username = os.Getenv("MONGODB_USER")
+	c.Database.Password = os.Getenv("MONGODB_PASSWORD")
+	c.TelegramBot.APIKey = os.Getenv("BOT_API_KEY")
 }

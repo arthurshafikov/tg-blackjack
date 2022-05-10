@@ -24,3 +24,5 @@ Messages:
   GameEnterHint: "Type /draw command to enter the game."
 
   TopPlayers: "*Top* players:"
+App:
+  NumOfDecks: 6

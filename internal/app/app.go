@@ -30,16 +30,16 @@ func Run() {
 	ctx := context.Background()
 	config := config.NewConfig(envPath, configFolderPath)
 
-	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBotConfig.APIKey)
+	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBot.APIKey)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	mongo, err := mongodb.NewMongoDB(ctx, mongodb.Config{
-		Scheme:   config.DatabaseConfig.Scheme,
-		Host:     config.DatabaseConfig.Host,
-		Username: config.DatabaseConfig.Username,
-		Password: config.DatabaseConfig.Password,
+		Scheme:   config.Database.Scheme,
+		Host:     config.Database.Host,
+		Username: config.Database.Username,
+		Password: config.Database.Password,
 	})
 	if err != nil {
 		log.Fatalln(err)
