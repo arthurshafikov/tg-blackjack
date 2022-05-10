@@ -28,7 +28,7 @@ type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error
 	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
-	DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error)
+	SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error
 }
 
 type Players interface {

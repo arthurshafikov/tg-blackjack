@@ -73,9 +73,8 @@ func (c *Card) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 	}
 
 	if chat.Deck.IsEmpty() {
-		var err error
-		chat.Deck, err = c.setNewDeck(ctx, telegramChatID)
-		if err != nil {
+		chat.Deck = core.NewDeck()
+		if err := c.SetNewDeck(ctx, telegramChatID, chat.Deck); err != nil {
 			return card, err
 		}
 	}
@@ -83,34 +82,17 @@ func (c *Card) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 	return chat.Deck.DrawCard()
 }
 
-func (c *Card) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
-	cards := core.Cards{}
-	for amount > 0 {
-		card, err := c.DrawCard(ctx, telegramChatID)
-		if err != nil {
-			return nil, err
-		}
-
-		cards = append(cards, card)
-
-		amount--
-	}
-
-	return cards, nil
-}
-
-func (c *Card) setNewDeck(ctx context.Context, telegramChatID int64) (*core.Deck, error) {
-	deck := core.NewDeck()
+func (c *Card) SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error {
 	filter := bson.M{"telegram_chat_id": telegramChatID}
 	update := bson.M{"$set": bson.M{"deck": deck}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return deck, core.ErrNotFound
+			return core.ErrNotFound
 		}
 
-		return deck, err
+		return err
 	}
 
-	return deck, nil
+	return nil
 }

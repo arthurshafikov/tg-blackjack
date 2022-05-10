@@ -79,6 +79,22 @@ func (c *CardService) DrawCard(
 	return player, nil
 }
 
+func (c *CardService) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
+	cards := core.Cards{}
+	for amount > 0 {
+		card, err := c.repo.DrawCard(ctx, telegramChatID)
+		if err != nil {
+			return nil, err
+		}
+
+		cards = append(cards, card)
+
+		amount--
+	}
+
+	return cards, nil
+}
+
 func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
 	card, err := c.repo.DrawCard(ctx, telegramChatID)
 	if err != nil {
@@ -100,7 +116,7 @@ func (c *CardService) createNewPlayer(
 	telegramChatID int64,
 	username string,
 ) (*core.Player, error) {
-	playerCards, err := c.repo.DrawCards(ctx, telegramChatID, 2)
+	playerCards, err := c.DrawCards(ctx, telegramChatID, 2)
 	if err != nil {
 		c.logger.Error(err)
 
