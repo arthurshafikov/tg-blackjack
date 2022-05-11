@@ -44,7 +44,7 @@ func TestDrawCardsEmptyDeck(t *testing.T) {
 }
 
 func TestConcurrencyDrawCard(t *testing.T) {
-	cards := NewCards()
+	cards := NewCards(6)
 	deckLength := len(cards)
 	deck := Deck{
 		Cards: cards,

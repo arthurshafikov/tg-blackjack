@@ -49,6 +49,7 @@ func Run() {
 
 	logger := logger.NewLogger()
 	services := services.NewServices(services.Deps{
+		Config:     config,
 		Repository: repository,
 		Logger:     logger,
 	})

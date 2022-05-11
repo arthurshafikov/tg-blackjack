@@ -56,7 +56,7 @@ func TestDrawCard(t *testing.T) {
 		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new5Card).Return(nil),
 	)
 	expected.Cards = append(expected.Cards, new5Card)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -77,7 +77,7 @@ func TestDrawCardPlayerNotExists(t *testing.T) {
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Times(2).Return(new5Card, nil),
 		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, expected).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -91,7 +91,7 @@ func TestDrawCardGameNotExists(t *testing.T) {
 	gomock.InOrder(
 		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNoActiveGame),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -106,7 +106,7 @@ func TestDrawCardServerError(t *testing.T) {
 		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -132,7 +132,7 @@ func TestDrawCardBustedCase(t *testing.T) {
 		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, newKCard).Return(nil),
 		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -158,7 +158,7 @@ func TestDrawCard21ValueCase(t *testing.T) {
 		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new9Card).Return(nil),
 		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -181,7 +181,7 @@ func TestDrawCardBlackjackCase(t *testing.T) {
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(newKCard, nil),
 		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, *expected).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	player, err := service.DrawCard(ctx, telegramChatID, username)
 
@@ -197,7 +197,7 @@ func TestDrawCardFromDeckToDealer(t *testing.T) {
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, nil),
 		repo.EXPECT().AddCardToDealer(ctx, telegramChatID, new9Card).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	card, err := service.DrawCardFromDeckToDealer(ctx, telegramChatID)
 
@@ -211,7 +211,7 @@ func TestDrawCardFromDeckToDealerServerError(t *testing.T) {
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, core.ErrNotFound),
 		logger.EXPECT().Error(core.ErrNotFound),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	card, err := service.DrawCardFromDeckToDealer(ctx, telegramChatID)
 
@@ -225,7 +225,7 @@ func TestDrawCardDeckEmpty(t *testing.T) {
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, core.ErrDeckEmpty),
 		repo.EXPECT().SetNewDeck(ctx, telegramChatID, gomock.Any()).Return(nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	_, err := service.drawCard(ctx, telegramChatID)
 
@@ -237,7 +237,7 @@ func TestDrawCardNonEmptyError(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, core.ErrServerError),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	_, err := service.drawCard(ctx, telegramChatID)
 
@@ -249,7 +249,7 @@ func TestDrawCards(t *testing.T) {
 	gomock.InOrder(
 		repo.EXPECT().DrawCard(ctx, telegramChatID).Times(4).Return(new9Card, nil),
 	)
-	service := NewCardService(logger, repo, playerServiceMock)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
 
 	cards, err := service.drawCards(ctx, telegramChatID, 4)
 

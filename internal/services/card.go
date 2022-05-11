@@ -13,14 +13,17 @@ type CardService struct {
 	repo   repository.Cards
 
 	playerService Players
+
+	numOfDecks int
 }
 
-func NewCardService(logger Logger, repo repository.Cards, playerService Players) *CardService {
+func NewCardService(logger Logger, repo repository.Cards, playerService Players, numOfDecks int) *CardService {
 	return &CardService{
 		logger: logger,
 		repo:   repo,
 
 		playerService: playerService,
+		numOfDecks:    numOfDecks,
 	}
 }
 
@@ -145,7 +148,7 @@ func (c *CardService) drawCard(ctx context.Context, telegramChatID int64) (core.
 			return card, err
 		}
 
-		deck := core.NewDeck()
+		deck := core.NewDeck(c.numOfDecks)
 		card, err = deck.DrawCard()
 		if err != nil {
 			return card, err

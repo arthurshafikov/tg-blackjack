@@ -7,9 +7,9 @@ type Deck struct {
 	Cards Cards `bson:"cards"`
 }
 
-func NewDeck() *Deck {
+func NewDeck(numOfDecks int) *Deck {
 	return &Deck{
-		Cards: NewCards(),
+		Cards: NewCards(numOfDecks),
 	}
 }
 

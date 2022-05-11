@@ -32,10 +32,10 @@ type Card string
 
 type Cards []Card
 
-func NewCards() Cards {
+func NewCards(numOfDecks int) Cards {
 	cards := Cards{}
 
-	for i := 0; i < 6; i++ { // todo config.
+	for i := 0; i < numOfDecks; i++ {
 		for v := range CardValues {
 			for _, s := range CardSymbols {
 				cards = append(cards, Card(s+v))

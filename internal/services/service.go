@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 
+	"github.com/arthurshafikov/tg-blackjack/internal/config"
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/repository"
 )
@@ -47,6 +48,7 @@ type Services struct {
 }
 
 type Deps struct {
+	Config     *config.Config
 	Repository *repository.Repository
 	Logger
 }
@@ -55,7 +57,7 @@ func NewServices(deps Deps) *Services {
 	chats := NewChatService(deps.Logger, deps.Repository.Chats)
 	statistics := NewStatisticService(deps.Logger, deps.Repository.Statistic)
 	players := NewPlayerService(deps.Logger, deps.Repository.Players)
-	cards := NewCardService(deps.Logger, deps.Repository.Cards, players)
+	cards := NewCardService(deps.Logger, deps.Repository.Cards, players, deps.Config.App.NumOfDecks)
 	games := NewGameService(deps.Logger, deps.Repository.Games, statistics, cards)
 
 	return &Services{
