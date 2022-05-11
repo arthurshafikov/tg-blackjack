@@ -247,19 +247,18 @@ func (mr *MockCardsMockRecorder) DrawCard(ctx, telegramChatID interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCard", reflect.TypeOf((*MockCards)(nil).DrawCard), ctx, telegramChatID)
 }
 
-// DrawCards mocks base method.
-func (m *MockCards) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
+// SetNewDeck mocks base method.
+func (m *MockCards) SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DrawCards", ctx, telegramChatID, amount)
-	ret0, _ := ret[0].(core.Cards)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "SetNewDeck", ctx, telegramChatID, deck)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// DrawCards indicates an expected call of DrawCards.
-func (mr *MockCardsMockRecorder) DrawCards(ctx, telegramChatID, amount interface{}) *gomock.Call {
+// SetNewDeck indicates an expected call of SetNewDeck.
+func (mr *MockCardsMockRecorder) SetNewDeck(ctx, telegramChatID, deck interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCards", reflect.TypeOf((*MockCards)(nil).DrawCards), ctx, telegramChatID, amount)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetNewDeck", reflect.TypeOf((*MockCards)(nil).SetNewDeck), ctx, telegramChatID, deck)
 }
 
 // MockPlayers is a mock of Players interface.
@@ -297,21 +296,6 @@ func (m *MockPlayers) AddNewPlayer(ctx context.Context, telegramChatID int64, pl
 func (mr *MockPlayersMockRecorder) AddNewPlayer(ctx, telegramChatID, player interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewPlayer", reflect.TypeOf((*MockPlayers)(nil).AddNewPlayer), ctx, telegramChatID, player)
-}
-
-// CheckIfPlayerIsStopped mocks base method.
-func (m *MockPlayers) CheckIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckIfPlayerIsStopped", ctx, telegramChatID, username)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CheckIfPlayerIsStopped indicates an expected call of CheckIfPlayerIsStopped.
-func (mr *MockPlayersMockRecorder) CheckIfPlayerIsStopped(ctx, telegramChatID, username interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckIfPlayerIsStopped", reflect.TypeOf((*MockPlayers)(nil).CheckIfPlayerIsStopped), ctx, telegramChatID, username)
 }
 
 // GetPlayer mocks base method.

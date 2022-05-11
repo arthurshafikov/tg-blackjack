@@ -31,7 +31,7 @@ func getPlayerServiceDependencies(t *testing.T) (
 func TestStopDrawing(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username).Return(false, nil),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
 		repo.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
 	)
 	service := NewPlayerService(logger, repo)
@@ -42,19 +42,21 @@ func TestStopDrawing(t *testing.T) {
 
 func TestStopDrawingPlayerAlreadyStopped(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
+	player := *player
+	player.Stop = true
 	gomock.InOrder(
-		repo.EXPECT().CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username).Return(true, nil),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(&player, nil),
 	)
 	service := NewPlayerService(logger, repo)
 
-	err := service.StopDrawing(ctx, telegramChatID, player)
+	err := service.StopDrawing(ctx, telegramChatID, &player)
 	require.ErrorIs(t, err, core.ErrAlreadyStopped)
 }
 
 func TestStopDrawingGetPlayerServerError(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username).Return(false, core.ErrServerError),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
 	service := NewPlayerService(logger, repo)
@@ -66,7 +68,7 @@ func TestStopDrawingGetPlayerServerError(t *testing.T) {
 func TestStopDrawingServerError(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username).Return(false, nil),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
 		repo.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
@@ -79,7 +81,7 @@ func TestStopDrawingServerError(t *testing.T) {
 func TestStopDrawingNotFound(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
 	gomock.InOrder(
-		repo.EXPECT().CheckIfPlayerIsStopped(ctx, telegramChatID, player.Username).Return(false, nil),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
 		repo.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(core.ErrNotFound),
 	)
 	service := NewPlayerService(logger, repo)

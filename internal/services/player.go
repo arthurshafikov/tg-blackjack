@@ -77,7 +77,11 @@ func (p *PlayerService) AddNewPlayer(ctx context.Context, telegramChatID int64, 
 	return nil
 }
 
-func (p *PlayerService) checkIfPlayerIsStopped(ctx context.Context, telegramChatID int64, username string) (bool, error) {
+func (p *PlayerService) checkIfPlayerIsStopped(
+	ctx context.Context,
+	telegramChatID int64,
+	username string,
+) (bool, error) {
 	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
 	if err != nil {
 		return false, err

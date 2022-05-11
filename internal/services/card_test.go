@@ -14,11 +14,14 @@ import (
 var (
 	telegramChatID int64     = 1231234
 	username                 = "some_user"
-	cards                    = core.Cards{"♣10", "♥2"}
-	blackjack                = core.Cards{"♣10", "♥A"}
+	new2Card       core.Card = "♥2"
 	new5Card       core.Card = "♣5"
 	newKCard       core.Card = "♣K"
+	newACard       core.Card = "♥A"
 	new9Card       core.Card = "♣9"
+	cards                    = core.Cards{newKCard, new2Card}
+	blackjack                = core.Cards{newACard, newKCard}
+	sameCards                = core.Cards{new5Card, new5Card}
 )
 
 func getCardServiceDependencies(t *testing.T) (
@@ -65,13 +68,13 @@ func TestDrawCardPlayerNotExists(t *testing.T) {
 	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
 	expected := core.Player{
 		Username: username,
-		Cards:    cards,
+		Cards:    sameCards,
 		Stop:     false,
 		Busted:   false,
 	}
 	gomock.InOrder(
 		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
-		repo.EXPECT().DrawCards(ctx, telegramChatID, 2).Return(cards, nil),
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Times(2).Return(new5Card, nil),
 		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, expected).Return(nil),
 	)
 	service := NewCardService(logger, repo, playerServiceMock)
@@ -174,7 +177,8 @@ func TestDrawCardBlackjackCase(t *testing.T) {
 	}
 	gomock.InOrder(
 		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
-		repo.EXPECT().DrawCards(ctx, telegramChatID, 2).Return(blackjack, nil),
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(newACard, nil),
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(newKCard, nil),
 		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, *expected).Return(nil),
 	)
 	service := NewCardService(logger, repo, playerServiceMock)
