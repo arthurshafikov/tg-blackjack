@@ -27,13 +27,13 @@ type Games interface {
 type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error
-	DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error)
+	DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core.Card, error)
 	SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error
 }
 
 type Players interface {
 	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
-	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
+	SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error
 	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
 }
 

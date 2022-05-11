@@ -34,7 +34,7 @@ func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player 
 	return nil
 }
 
-func (p *Player) StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error {
+func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
 		bson.M{"active_game.players.username": player.Username},

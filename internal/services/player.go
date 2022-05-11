@@ -39,7 +39,7 @@ func (p *PlayerService) StopDrawing(
 		return core.ErrAlreadyStopped
 	}
 
-	if err := p.repo.StopDrawing(ctx, telegramChatID, player); err != nil {
+	if err := p.repo.SetPlayerStopAndBusted(ctx, telegramChatID, player); err != nil {
 		if !errors.Is(err, core.ErrNotFound) {
 			p.logger.Error(err)
 

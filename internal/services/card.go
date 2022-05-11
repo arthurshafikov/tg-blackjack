@@ -142,7 +142,7 @@ func (c *CardService) drawCardFromDeckToUser(
 }
 
 func (c *CardService) drawCard(ctx context.Context, telegramChatID int64) (core.Card, error) {
-	card, err := c.repo.DrawCard(ctx, telegramChatID)
+	card, err := c.repo.DrawCardFromDeck(ctx, telegramChatID)
 	if err != nil {
 		if !errors.Is(err, core.ErrDeckEmpty) {
 			return card, err

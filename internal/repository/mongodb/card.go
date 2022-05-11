@@ -52,7 +52,7 @@ func (c *Card) AddCardToPlayer(ctx context.Context, telegramChatID int64, userna
 	return nil
 }
 
-func (c *Card) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, error) {
+func (c *Card) DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core.Card, error) {
 	var card core.Card
 
 	filter := bson.M{"telegram_chat_id": telegramChatID}
