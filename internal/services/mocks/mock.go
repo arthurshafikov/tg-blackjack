@@ -207,21 +207,6 @@ func (m *MockCards) EXPECT() *MockCardsMockRecorder {
 	return m.recorder
 }
 
-// DrawCard mocks base method.
-func (m *MockCards) DrawCard(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DrawCard", ctx, telegramChatID, username)
-	ret0, _ := ret[0].(*core.Player)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DrawCard indicates an expected call of DrawCard.
-func (mr *MockCardsMockRecorder) DrawCard(ctx, telegramChatID, username interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCard", reflect.TypeOf((*MockCards)(nil).DrawCard), ctx, telegramChatID, username)
-}
-
 // DrawCardFromDeckToDealer mocks base method.
 func (m *MockCards) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
 	m.ctrl.T.Helper()
@@ -235,6 +220,21 @@ func (m *MockCards) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID
 func (mr *MockCardsMockRecorder) DrawCardFromDeckToDealer(ctx, telegramChatID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToDealer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToDealer), ctx, telegramChatID)
+}
+
+// DrawCardFromDeckToPlayer mocks base method.
+func (m *MockCards) DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DrawCardFromDeckToPlayer", ctx, telegramChatID, username)
+	ret0, _ := ret[0].(*core.Player)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DrawCardFromDeckToPlayer indicates an expected call of DrawCardFromDeckToPlayer.
+func (mr *MockCardsMockRecorder) DrawCardFromDeckToPlayer(ctx, telegramChatID, username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToPlayer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToPlayer), ctx, telegramChatID, username)
 }
 
 // MockPlayers is a mock of Players interface.

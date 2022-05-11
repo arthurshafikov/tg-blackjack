@@ -58,7 +58,7 @@ func TestDrawCard(t *testing.T) {
 	expected.Cards = append(expected.Cards, new5Card)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.NoError(t, err)
 	require.Equal(t, expected, player)
@@ -79,7 +79,7 @@ func TestDrawCardPlayerNotExists(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.NoError(t, err)
 	require.Equal(t, expected, *player)
@@ -93,7 +93,7 @@ func TestDrawCardGameNotExists(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.ErrorIs(t, err, core.ErrNoActiveGame)
 	require.Equal(t, expected, player)
@@ -108,7 +108,7 @@ func TestDrawCardServerError(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.ErrorIs(t, err, core.ErrServerError)
 	require.Equal(t, expected, player)
@@ -134,7 +134,7 @@ func TestDrawCardBustedCase(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.ErrorIs(t, err, core.ErrBusted)
 	require.Equal(t, expected, player)
@@ -160,7 +160,7 @@ func TestDrawCard21ValueCase(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.NoError(t, err)
 	require.Equal(t, expected, player)
@@ -183,7 +183,7 @@ func TestDrawCardBlackjackCase(t *testing.T) {
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCard(ctx, telegramChatID, username)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.NoError(t, err)
 	require.Equal(t, expected, player)

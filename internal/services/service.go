@@ -25,7 +25,7 @@ type Games interface {
 }
 
 type Cards interface {
-	DrawCard(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+	DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
 	DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error)
 }
 

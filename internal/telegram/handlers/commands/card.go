@@ -10,7 +10,7 @@ import (
 
 func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	var msgText string
-	player, err := c.services.Cards.DrawCard(c.ctx, message.Chat.ID, message.From.UserName)
+	player, err := c.services.Cards.DrawCardFromDeckToPlayer(c.ctx, message.Chat.ID, message.From.UserName)
 	if err != nil {
 		switch err { //nolint
 		case core.ErrCantDraw:

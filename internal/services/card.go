@@ -27,7 +27,7 @@ func NewCardService(logger Logger, repo repository.Cards, playerService Players,
 	}
 }
 
-func (c *CardService) DrawCard(
+func (c *CardService) DrawCardFromDeckToPlayer(
 	ctx context.Context,
 	telegramChatID int64,
 	username string,
