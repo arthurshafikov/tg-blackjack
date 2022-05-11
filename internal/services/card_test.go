@@ -218,3 +218,41 @@ func TestDrawCardFromDeckToDealerServerError(t *testing.T) {
 	require.ErrorIs(t, err, core.ErrServerError)
 	require.Equal(t, new9Card, card)
 }
+
+func TestDrawCardDeckEmpty(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, core.ErrDeckEmpty),
+		repo.EXPECT().SetNewDeck(ctx, telegramChatID, gomock.Any()).Return(nil),
+	)
+	service := NewCardService(logger, repo, playerServiceMock)
+
+	_, err := service.drawCard(ctx, telegramChatID)
+
+	require.NoError(t, err)
+}
+
+func TestDrawCardNonEmptyError(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Return(new9Card, core.ErrServerError),
+	)
+	service := NewCardService(logger, repo, playerServiceMock)
+
+	_, err := service.drawCard(ctx, telegramChatID)
+
+	require.ErrorIs(t, err, core.ErrServerError)
+}
+
+func TestDrawCards(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().DrawCard(ctx, telegramChatID).Times(4).Return(new9Card, nil),
+	)
+	service := NewCardService(logger, repo, playerServiceMock)
+
+	cards, err := service.drawCards(ctx, telegramChatID, 4)
+
+	require.NoError(t, err)
+	require.Len(t, cards, 4)
+}

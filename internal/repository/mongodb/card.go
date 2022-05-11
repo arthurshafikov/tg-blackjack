@@ -72,13 +72,6 @@ func (c *Card) DrawCard(ctx context.Context, telegramChatID int64) (core.Card, e
 		return card, err
 	}
 
-	if chat.Deck.IsEmpty() {
-		chat.Deck = core.NewDeck()
-		if err := c.SetNewDeck(ctx, telegramChatID, chat.Deck); err != nil {
-			return card, err
-		}
-	}
-
 	return chat.Deck.DrawCard()
 }
 

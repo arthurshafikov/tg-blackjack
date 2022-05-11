@@ -79,24 +79,8 @@ func (c *CardService) DrawCard(
 	return player, nil
 }
 
-func (c *CardService) DrawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
-	cards := core.Cards{}
-	for amount > 0 {
-		card, err := c.repo.DrawCard(ctx, telegramChatID)
-		if err != nil {
-			return nil, err
-		}
-
-		cards = append(cards, card)
-
-		amount--
-	}
-
-	return cards, nil
-}
-
 func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
-	card, err := c.repo.DrawCard(ctx, telegramChatID)
+	card, err := c.drawCard(ctx, telegramChatID)
 	if err != nil {
 		c.logger.Error(err)
 
@@ -116,14 +100,14 @@ func (c *CardService) createNewPlayer(
 	telegramChatID int64,
 	username string,
 ) (*core.Player, error) {
-	playerCards, err := c.DrawCards(ctx, telegramChatID, 2)
+	playerCards, err := c.drawCards(ctx, telegramChatID, 2)
 	if err != nil {
 		c.logger.Error(err)
 
 		return nil, core.ErrServerError
 	}
 
-	player := &core.Player{
+	player := core.Player{
 		Username: username,
 		Cards:    playerCards,
 	}
@@ -132,13 +116,13 @@ func (c *CardService) createNewPlayer(
 		player.Stop = true
 	}
 
-	if err := c.playerService.AddNewPlayer(ctx, telegramChatID, *player); err != nil {
+	if err := c.playerService.AddNewPlayer(ctx, telegramChatID, player); err != nil {
 		c.logger.Error(err)
 
 		return nil, core.ErrServerError
 	}
 
-	return player, nil
+	return &player, nil
 }
 
 func (c *CardService) drawCardFromDeckToUser(
@@ -146,10 +130,47 @@ func (c *CardService) drawCardFromDeckToUser(
 	telegramChatID int64,
 	username string,
 ) (core.Card, error) {
-	card, err := c.repo.DrawCard(ctx, telegramChatID)
+	card, err := c.drawCard(ctx, telegramChatID)
 	if err != nil {
 		return card, err
 	}
 
 	return card, c.repo.AddCardToPlayer(ctx, telegramChatID, username, card)
+}
+
+func (c *CardService) drawCard(ctx context.Context, telegramChatID int64) (core.Card, error) {
+	card, err := c.repo.DrawCard(ctx, telegramChatID)
+	if err != nil {
+		if !errors.Is(err, core.ErrDeckEmpty) {
+			return card, err
+		}
+
+		deck := core.NewDeck()
+		card, err = deck.DrawCard()
+		if err != nil {
+			return card, err
+		}
+
+		if err := c.repo.SetNewDeck(ctx, telegramChatID, deck); err != nil {
+			return card, err
+		}
+	}
+
+	return card, nil
+}
+
+func (c *CardService) drawCards(ctx context.Context, telegramChatID int64, amount int) (core.Cards, error) {
+	cards := core.Cards{}
+	for amount > 0 {
+		card, err := c.drawCard(ctx, telegramChatID)
+		if err != nil {
+			return nil, err
+		}
+
+		cards = append(cards, card)
+
+		amount--
+	}
+
+	return cards, nil
 }
