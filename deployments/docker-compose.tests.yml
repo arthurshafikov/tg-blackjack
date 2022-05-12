@@ -1,0 +1,26 @@
+version: '3'
+
+networks:
+  integration:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: ../.
+      dockerfile: ./build/tests/Dockerfile
+    environment:
+      WAIT_HOSTS: mongo:27017
+      WAIT_AFTER: 3
+    depends_on: 
+      - mongo
+    networks:
+      - integration
+  mongo:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: homestead
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    networks:
+      - integration
