@@ -21,7 +21,7 @@ var r *require.Assertions
 type APITestSuite struct {
 	suite.Suite
 
-	db *mongo.Client
+	collection *mongo.Collection
 
 	logger   services.Logger
 	repos    *repository.Repository
@@ -56,8 +56,7 @@ func (s *APITestSuite) SetupSuite() {
 		},
 	}
 
-	var err error
-	s.db, err = mongodb.NewMongoDB(s.ctx, mongodb.Config{
+	mongo, err := mongodb.NewMongoDB(s.ctx, mongodb.Config{
 		Scheme:   s.config.Database.Scheme,
 		Host:     s.config.Database.Host,
 		Username: s.config.Database.Username,
@@ -66,9 +65,10 @@ func (s *APITestSuite) SetupSuite() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	s.collection = mongo.Database("homestead").Collection("chats")
 	r.NoError(s.clearDB())
 
-	s.repos = repository.NewRepository(s.db)
+	s.repos = repository.NewRepository(mongo)
 
 	s.logger = logger.NewLogger()
 	s.services = services.NewServices(services.Deps{
@@ -88,7 +88,7 @@ func (s *APITestSuite) TearDownSuite() {
 
 func (s *APITestSuite) clearDB() error {
 	filter := bson.M{}
-	if _, err := s.db.Database("homestead").Collection("chats").DeleteMany(s.ctx, filter); err != nil {
+	if _, err := s.collection.DeleteMany(s.ctx, filter); err != nil {
 		return err
 	}
 

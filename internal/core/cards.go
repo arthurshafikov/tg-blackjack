@@ -28,6 +28,8 @@ var CardSymbols = []string{
 	"♠",
 }
 
+const NumOfCardsInDeck = 52
+
 type Card string
 
 type Cards []Card
