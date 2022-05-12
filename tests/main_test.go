@@ -12,6 +12,7 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -22,6 +23,7 @@ type APITestSuite struct {
 
 	db *mongo.Client
 
+	logger   services.Logger
 	repos    *repository.Repository
 	services *services.Services
 	config   *config.Config
@@ -49,9 +51,13 @@ func (s *APITestSuite) SetupSuite() {
 			Username: "root",
 			Password: "secret",
 		},
+		App: config.App{
+			NumOfDecks: 6,
+		},
 	}
 
-	mongo, err := mongodb.NewMongoDB(s.ctx, mongodb.Config{
+	var err error
+	s.db, err = mongodb.NewMongoDB(s.ctx, mongodb.Config{
 		Scheme:   s.config.Database.Scheme,
 		Host:     s.config.Database.Host,
 		Username: s.config.Database.Username,
@@ -60,20 +66,31 @@ func (s *APITestSuite) SetupSuite() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	r.NoError(s.clearDB())
 
-	repository := repository.NewRepository(mongo)
+	s.repos = repository.NewRepository(s.db)
 
-	logger := logger.NewLogger()
+	s.logger = logger.NewLogger()
 	s.services = services.NewServices(services.Deps{
 		Config:     s.config,
-		Repository: repository,
-		Logger:     logger,
+		Repository: s.repos,
+		Logger:     s.logger,
 	})
 }
 
 func (s *APITestSuite) TearDownTest() {
+	r.NoError(s.clearDB())
 }
 
 func (s *APITestSuite) TearDownSuite() {
 	s.ctxCancel()
+}
+
+func (s *APITestSuite) clearDB() error {
+	filter := bson.M{}
+	if _, err := s.db.Database("homestead").Collection("chats").DeleteMany(s.ctx, filter); err != nil {
+		return err
+	}
+
+	return nil
 }

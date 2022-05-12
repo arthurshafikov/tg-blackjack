@@ -11,7 +11,7 @@ services:
       dockerfile: ./build/tests/Dockerfile
     environment:
       WAIT_HOSTS: mongo:27017
-      WAIT_AFTER: 3
+      WAIT_AFTER: 1
     depends_on: 
       - mongo
     networks:
