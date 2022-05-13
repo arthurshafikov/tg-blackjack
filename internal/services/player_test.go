@@ -30,13 +30,14 @@ func getPlayerServiceDependencies(t *testing.T) (
 
 func TestStopDrawing(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
+	player := *player
 	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
-		repo.EXPECT().SetPlayerStopAndBusted(ctx, telegramChatID, player).Return(nil),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(&player, nil),
+		repo.EXPECT().SetPlayerStopAndBusted(ctx, telegramChatID, &player).Return(nil),
 	)
 	service := NewPlayerService(logger, repo)
 
-	err := service.StopDrawing(ctx, telegramChatID, player)
+	err := service.StopDrawing(ctx, telegramChatID, &player)
 	require.NoError(t, err)
 }
 
@@ -55,26 +56,28 @@ func TestStopDrawingPlayerAlreadyStopped(t *testing.T) {
 
 func TestStopDrawingGetPlayerServerError(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
+	player := *player
 	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, core.ErrServerError),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(&player, core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
 	service := NewPlayerService(logger, repo)
 
-	err := service.StopDrawing(ctx, telegramChatID, player)
+	err := service.StopDrawing(ctx, telegramChatID, &player)
 	require.ErrorIs(t, err, core.ErrServerError)
 }
 
 func TestStopDrawingServerError(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
+	player := *player
 	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
-		repo.EXPECT().SetPlayerStopAndBusted(ctx, telegramChatID, player).Return(core.ErrServerError),
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(&player, nil),
+		repo.EXPECT().SetPlayerStopAndBusted(ctx, telegramChatID, &player).Return(core.ErrServerError),
 		logger.EXPECT().Error(core.ErrServerError),
 	)
 	service := NewPlayerService(logger, repo)
 
-	err := service.StopDrawing(ctx, telegramChatID, player)
+	err := service.StopDrawing(ctx, telegramChatID, &player)
 	require.ErrorIs(t, err, core.ErrServerError)
 }
 
