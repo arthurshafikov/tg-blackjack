@@ -52,26 +52,14 @@ func (b *Bot) Start() error {
 		return err
 	}
 
-	var chatID int64
 	for update := range updates {
-		if update.Message != nil { //nolint
-			chatID = update.Message.Chat.ID
-		} else if update.CallbackQuery != nil {
-			chatID = update.CallbackQuery.Message.Chat.ID
-		} else {
+		if update.Message == nil {
 			continue
 		}
+		chatID := update.Message.Chat.ID
 
 		if err := b.checkAuthorization(chatID); err != nil && update.Message.Command() != core.StartCommand {
 			b.handleError(chatID, err)
-
-			continue
-		}
-
-		if update.CallbackQuery != nil {
-			if err := b.handleCallbackQuery(update.CallbackQuery); err != nil {
-				b.handleError(chatID, err)
-			}
 
 			continue
 		}
@@ -83,11 +71,6 @@ func (b *Bot) Start() error {
 			}
 
 			continue
-		}
-
-		// Handle regular messages
-		if err := b.handleMessage(update.Message); err != nil {
-			b.handleError(chatID, err)
 		}
 	}
 

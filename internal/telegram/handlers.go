@@ -21,11 +21,3 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 
 	return nil
 }
-
-func (b *Bot) handleMessage(message *tgbotapi.Message) error {
-	return nil
-}
-
-func (b *Bot) handleCallbackQuery(query *tgbotapi.CallbackQuery) error {
-	return nil
-}
