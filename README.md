@@ -1,5 +1,9 @@
 # Telegram Blackjack Bot
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/arthurshafikov/tg-blackjack)](https://goreportcard.com/report/github.com/arthurshafikov/tg-blackjack)
+![Tests](https://github.com/arthurshafikov/tg-blackjack/actions/workflows/tests.yml/badge.svg)
+![License](https://img.shields.io/github/license/arthurshafikov/tg-blackjack)
+
 Here is the demo of Blackjack bot:
 ![](.github/blackjack-demo.gif)
 
