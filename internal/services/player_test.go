@@ -28,6 +28,66 @@ func getPlayerServiceDependencies(t *testing.T) (
 		mock_repository.NewMockPlayers(ctrl)
 }
 
+func TestAddPlayer(t *testing.T) {
+	ctx, logger, repo := getPlayerServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().AddNewPlayer(ctx, telegramChatID, *player).Return(nil),
+	)
+	service := NewPlayerService(logger, repo)
+
+	err := service.AddNewPlayer(ctx, telegramChatID, *player)
+	require.NoError(t, err)
+}
+
+func TestAddPlayerServerError(t *testing.T) {
+	ctx, logger, repo := getPlayerServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().AddNewPlayer(ctx, telegramChatID, *player).Return(core.ErrServerError),
+		logger.EXPECT().Error(core.ErrServerError),
+	)
+	service := NewPlayerService(logger, repo)
+
+	err := service.AddNewPlayer(ctx, telegramChatID, *player)
+	require.ErrorIs(t, err, core.ErrServerError)
+}
+
+func TestGetPlayer(t *testing.T) {
+	ctx, logger, repo := getPlayerServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
+	)
+	service := NewPlayerService(logger, repo)
+
+	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
+	require.NoError(t, err)
+	require.Equal(t, player, result)
+}
+
+func TestGetPlayerServerError(t *testing.T) {
+	ctx, logger, repo := getPlayerServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(nil, core.ErrServerError),
+		logger.EXPECT().Error(core.ErrServerError),
+	)
+	service := NewPlayerService(logger, repo)
+
+	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
+	require.ErrorIs(t, err, core.ErrServerError)
+	require.Nil(t, result)
+}
+
+func TestGetPlayerNotFound(t *testing.T) {
+	ctx, logger, repo := getPlayerServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(nil, core.ErrNotFound),
+	)
+	service := NewPlayerService(logger, repo)
+
+	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
+	require.ErrorIs(t, err, core.ErrNotFound)
+	require.Nil(t, result)
+}
+
 func TestStopDrawing(t *testing.T) {
 	ctx, logger, repo := getPlayerServiceDependencies(t)
 	player := *player
@@ -91,64 +151,4 @@ func TestStopDrawingNotFound(t *testing.T) {
 
 	err := service.StopDrawing(ctx, telegramChatID, player)
 	require.ErrorIs(t, err, core.ErrNotFound)
-}
-
-func TestGetPlayer(t *testing.T) {
-	ctx, logger, repo := getPlayerServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(player, nil),
-	)
-	service := NewPlayerService(logger, repo)
-
-	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
-	require.NoError(t, err)
-	require.Equal(t, player, result)
-}
-
-func TestGetPlayerServerError(t *testing.T) {
-	ctx, logger, repo := getPlayerServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(nil, core.ErrServerError),
-		logger.EXPECT().Error(core.ErrServerError),
-	)
-	service := NewPlayerService(logger, repo)
-
-	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
-	require.ErrorIs(t, err, core.ErrServerError)
-	require.Nil(t, result)
-}
-
-func TestGetPlayerNotFound(t *testing.T) {
-	ctx, logger, repo := getPlayerServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().GetPlayer(ctx, telegramChatID, player.Username).Return(nil, core.ErrNotFound),
-	)
-	service := NewPlayerService(logger, repo)
-
-	result, err := service.GetPlayer(ctx, telegramChatID, player.Username)
-	require.ErrorIs(t, err, core.ErrNotFound)
-	require.Nil(t, result)
-}
-
-func TestAddPlayer(t *testing.T) {
-	ctx, logger, repo := getPlayerServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().AddNewPlayer(ctx, telegramChatID, *player).Return(nil),
-	)
-	service := NewPlayerService(logger, repo)
-
-	err := service.AddNewPlayer(ctx, telegramChatID, *player)
-	require.NoError(t, err)
-}
-
-func TestAddPlayerServerError(t *testing.T) {
-	ctx, logger, repo := getPlayerServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().AddNewPlayer(ctx, telegramChatID, *player).Return(core.ErrServerError),
-		logger.EXPECT().Error(core.ErrServerError),
-	)
-	service := NewPlayerService(logger, repo)
-
-	err := service.AddNewPlayer(ctx, telegramChatID, *player)
-	require.ErrorIs(t, err, core.ErrServerError)
 }

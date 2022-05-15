@@ -31,36 +31,6 @@ func NewGameService(
 	}
 }
 
-func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
-	game := core.Game{
-		Dealer:  core.Cards{},
-		Players: []core.Player{},
-	}
-
-	if err := g.repo.SetActiveGame(ctx, telegramChatID, game); err != nil {
-		if !errors.Is(err, core.ErrActiveGame) {
-			g.logger.Error(err)
-
-			return nil, core.ErrServerError
-		}
-
-		return nil, core.ErrActiveGame
-	}
-
-	for i := 0; i < 2; i++ {
-		card, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
-		if err != nil {
-			g.logger.Error(err)
-
-			return nil, core.ErrServerError
-		}
-
-		game.Dealer = append(game.Dealer, card)
-	}
-
-	return &game, nil
-}
-
 func (g *GameService) CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error) {
 	result := true
 	game, err := g.repo.GetActiveGame(ctx, telegramChatID)
@@ -149,4 +119,34 @@ func (g *GameService) FinishGame(
 	}
 
 	return game, gameResult, nil
+}
+
+func (g *GameService) NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
+	game := core.Game{
+		Dealer:  core.Cards{},
+		Players: []core.Player{},
+	}
+
+	if err := g.repo.SetActiveGame(ctx, telegramChatID, game); err != nil {
+		if !errors.Is(err, core.ErrActiveGame) {
+			g.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+
+		return nil, core.ErrActiveGame
+	}
+
+	for i := 0; i < 2; i++ {
+		card, err := g.cardService.DrawCardFromDeckToDealer(ctx, telegramChatID)
+		if err != nil {
+			g.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+
+		game.Dealer = append(game.Dealer, card)
+	}
+
+	return &game, nil
 }

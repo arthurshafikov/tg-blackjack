@@ -8,9 +8,26 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/repository"
 )
 
+type Cards interface {
+	DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error)
+	DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+}
+
 type Chats interface {
 	CheckChatExists(ctx context.Context, telegramChatID int64) error
 	RegisterChat(ctx context.Context, telegramChatID int64) error
+}
+
+type Games interface {
+	CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error)
+	FinishGame(ctx context.Context, telegramChatID int64) (*core.Game, core.UsersStatistics, error)
+	NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
+}
+
+type Players interface {
+	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
+	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
 }
 
 type Statistics interface {
@@ -18,33 +35,16 @@ type Statistics interface {
 	IncrementStatistic(ctx context.Context, telegramChatID int64, gameResult core.UsersStatistics) error
 }
 
-type Games interface {
-	NewGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
-	FinishGame(ctx context.Context, telegramChatID int64) (*core.Game, core.UsersStatistics, error)
-	CheckIfGameShouldBeFinished(ctx context.Context, telegramChatID int64) (bool, error)
-}
-
-type Cards interface {
-	DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
-	DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error)
-}
-
-type Players interface {
-	StopDrawing(ctx context.Context, telegramChatID int64, player *core.Player) error
-	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
-	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
-}
-
 type Logger interface {
 	Error(err error)
 }
 
 type Services struct {
-	Chats
-	Statistics
-	Games
 	Cards
+	Chats
+	Games
 	Players
+	Statistics
 }
 
 type Deps struct {
@@ -61,10 +61,10 @@ func NewServices(deps Deps) *Services {
 	games := NewGameService(deps.Logger, deps.Repository.Games, statistics, cards)
 
 	return &Services{
-		Chats:      chats,
-		Statistics: statistics,
-		Games:      games,
 		Cards:      cards,
+		Chats:      chats,
+		Games:      games,
 		Players:    players,
+		Statistics: statistics,
 	}
 }

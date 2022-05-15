@@ -64,60 +64,6 @@ func getGameServiceDependencies(t *testing.T) (
 		mock_services.NewMockCards(ctrl)
 }
 
-func TestNewGame(t *testing.T) {
-	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
-	expected := emptyGame
-	expected.Dealer = core.Cards{new9Card, new9Card}
-	gomock.InOrder(
-		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(nil),
-		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Times(2).Return(new9Card, nil),
-	)
-	service := NewGameService(logger, repo, stats, cards)
-
-	result, err := service.NewGame(ctx, telegramChatID)
-	require.NoError(t, err)
-	require.Equal(t, expected, *result)
-}
-
-func TestNewGameActiveGameExists(t *testing.T) {
-	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(core.ErrActiveGame),
-	)
-	service := NewGameService(logger, repo, stats, cards)
-
-	result, err := service.NewGame(ctx, telegramChatID)
-	require.ErrorIs(t, err, core.ErrActiveGame)
-	require.Nil(t, result)
-}
-
-func TestNewGameServerError(t *testing.T) {
-	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(core.ErrServerError),
-		logger.EXPECT().Error(core.ErrServerError),
-	)
-	service := NewGameService(logger, repo, stats, cards)
-
-	result, err := service.NewGame(ctx, telegramChatID)
-	require.ErrorIs(t, err, core.ErrServerError)
-	require.Nil(t, result)
-}
-
-func TestNewGameDrawToDealerCausedServerError(t *testing.T) {
-	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
-	gomock.InOrder(
-		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(nil),
-		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Return(new5Card, core.ErrServerError),
-		logger.EXPECT().Error(core.ErrServerError),
-	)
-	service := NewGameService(logger, repo, stats, cards)
-
-	result, err := service.NewGame(ctx, telegramChatID)
-	require.ErrorIs(t, err, core.ErrServerError)
-	require.Nil(t, result)
-}
-
 func TestCheckIfGameShouldBeFinished(t *testing.T) {
 	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
 	gomock.InOrder(
@@ -231,4 +177,58 @@ func TestFinishGameDealerBusted(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, expectedGame, *resultGame)
 	require.Equal(t, expectedStats, resultStats)
+}
+
+func TestNewGame(t *testing.T) {
+	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
+	expected := emptyGame
+	expected.Dealer = core.Cards{new9Card, new9Card}
+	gomock.InOrder(
+		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(nil),
+		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Times(2).Return(new9Card, nil),
+	)
+	service := NewGameService(logger, repo, stats, cards)
+
+	result, err := service.NewGame(ctx, telegramChatID)
+	require.NoError(t, err)
+	require.Equal(t, expected, *result)
+}
+
+func TestNewGameActiveGameExists(t *testing.T) {
+	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(core.ErrActiveGame),
+	)
+	service := NewGameService(logger, repo, stats, cards)
+
+	result, err := service.NewGame(ctx, telegramChatID)
+	require.ErrorIs(t, err, core.ErrActiveGame)
+	require.Nil(t, result)
+}
+
+func TestNewGameServerError(t *testing.T) {
+	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(core.ErrServerError),
+		logger.EXPECT().Error(core.ErrServerError),
+	)
+	service := NewGameService(logger, repo, stats, cards)
+
+	result, err := service.NewGame(ctx, telegramChatID)
+	require.ErrorIs(t, err, core.ErrServerError)
+	require.Nil(t, result)
+}
+
+func TestNewGameDrawToDealerCausedServerError(t *testing.T) {
+	ctx, logger, repo, stats, cards := getGameServiceDependencies(t)
+	gomock.InOrder(
+		repo.EXPECT().SetActiveGame(ctx, telegramChatID, emptyGame).Return(nil),
+		cards.EXPECT().DrawCardFromDeckToDealer(ctx, telegramChatID).Return(new5Card, core.ErrServerError),
+		logger.EXPECT().Error(core.ErrServerError),
+	)
+	service := NewGameService(logger, repo, stats, cards)
+
+	result, err := service.NewGame(ctx, telegramChatID)
+	require.ErrorIs(t, err, core.ErrServerError)
+	require.Nil(t, result)
 }

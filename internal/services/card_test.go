@@ -39,156 +39,17 @@ func getCardServiceDependencies(t *testing.T) (
 		mock_services.NewMockPlayers(ctrl)
 }
 
-func TestDrawCard(t *testing.T) {
+func TestDrawCards(t *testing.T) {
 	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	expected := &core.Player{
-		Username: username,
-		Cards:    cards,
-		Stop:     false,
-		Busted:   false,
-	}
 	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(&core.Player{
-			Username: username,
-			Cards:    cards,
-		}, nil),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(new5Card, nil),
-		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new5Card).Return(nil),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Times(4).Return(new9Card, nil),
 	)
-	expected.Cards = append(expected.Cards, new5Card)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+	cards, err := service.drawCards(ctx, telegramChatID, 4)
 
 	require.NoError(t, err)
-	require.Equal(t, expected, player)
-}
-
-func TestDrawCardPlayerNotExists(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	expected := core.Player{
-		Username: username,
-		Cards:    sameCards,
-		Stop:     false,
-		Busted:   false,
-	}
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Times(2).Return(new5Card, nil),
-		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, expected).Return(nil),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.NoError(t, err)
-	require.Equal(t, expected, *player)
-}
-
-func TestDrawCardGameNotExists(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	var expected *core.Player
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNoActiveGame),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.ErrorIs(t, err, core.ErrNoActiveGame)
-	require.Equal(t, expected, player)
-}
-
-func TestDrawCardServerError(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	var expected *core.Player
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrServerError),
-		logger.EXPECT().Error(core.ErrServerError),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.ErrorIs(t, err, core.ErrServerError)
-	require.Equal(t, expected, player)
-}
-
-func TestDrawCardBustedCase(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	expected := &core.Player{
-		Username: username,
-		Cards:    append(cards, core.Cards{new5Card, newKCard}...),
-		Stop:     true,
-		Busted:   true,
-	}
-	player := &core.Player{
-		Username: username,
-		Cards:    append(cards, new5Card),
-	}
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(player, nil),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newKCard, nil),
-		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, newKCard).Return(nil),
-		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.ErrorIs(t, err, core.ErrBusted)
-	require.Equal(t, expected, player)
-}
-
-func TestDrawCard21ValueCase(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	expected := &core.Player{
-		Username: username,
-		Cards:    append(cards, new9Card),
-		Stop:     true,
-		Busted:   false,
-	}
-	player := &core.Player{
-		Username: username,
-		Cards:    cards,
-	}
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(player, nil),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(new9Card, nil),
-		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new9Card).Return(nil),
-		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.NoError(t, err)
-	require.Equal(t, expected, player)
-	require.Equal(t, 21, player.Cards.CountValue())
-}
-
-func TestDrawCardBlackjackCase(t *testing.T) {
-	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
-	expected := &core.Player{
-		Username: username,
-		Cards:    blackjack,
-		Stop:     true,
-		Busted:   false,
-	}
-	gomock.InOrder(
-		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newACard, nil),
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newKCard, nil),
-		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, *expected).Return(nil),
-	)
-	service := NewCardService(logger, repo, playerServiceMock, 1)
-
-	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
-
-	require.NoError(t, err)
-	require.Equal(t, expected, player)
-	require.Equal(t, 21, player.Cards.CountValue())
-	require.True(t, player.Cards.IsBlackjack())
+	require.Len(t, cards, 4)
 }
 
 func TestDrawCardFromDeckToDealer(t *testing.T) {
@@ -244,15 +105,154 @@ func TestDrawCardNonEmptyError(t *testing.T) {
 	require.ErrorIs(t, err, core.ErrServerError)
 }
 
-func TestDrawCards(t *testing.T) {
+func TestDrawCardFromDeckToPlayer(t *testing.T) {
 	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	expected := &core.Player{
+		Username: username,
+		Cards:    cards,
+		Stop:     false,
+		Busted:   false,
+	}
 	gomock.InOrder(
-		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Times(4).Return(new9Card, nil),
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(&core.Player{
+			Username: username,
+			Cards:    cards,
+		}, nil),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(new5Card, nil),
+		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new5Card).Return(nil),
+	)
+	expected.Cards = append(expected.Cards, new5Card)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.NoError(t, err)
+	require.Equal(t, expected, player)
+}
+
+func TestDrawCardFromDeckToPlayerPlayerNotExists(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	expected := core.Player{
+		Username: username,
+		Cards:    sameCards,
+		Stop:     false,
+		Busted:   false,
+	}
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Times(2).Return(new5Card, nil),
+		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, expected).Return(nil),
 	)
 	service := NewCardService(logger, repo, playerServiceMock, 1)
 
-	cards, err := service.drawCards(ctx, telegramChatID, 4)
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
 
 	require.NoError(t, err)
-	require.Len(t, cards, 4)
+	require.Equal(t, expected, *player)
+}
+
+func TestDrawCardFromDeckToPlayerGameNotExists(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	var expected *core.Player
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNoActiveGame),
+	)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.ErrorIs(t, err, core.ErrNoActiveGame)
+	require.Equal(t, expected, player)
+}
+
+func TestDrawCardFromDeckToPlayerServerError(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	var expected *core.Player
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrServerError),
+		logger.EXPECT().Error(core.ErrServerError),
+	)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.ErrorIs(t, err, core.ErrServerError)
+	require.Equal(t, expected, player)
+}
+
+func TestDrawCardFromDeckToPlayerBustedCase(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	expected := &core.Player{
+		Username: username,
+		Cards:    append(cards, core.Cards{new5Card, newKCard}...),
+		Stop:     true,
+		Busted:   true,
+	}
+	player := &core.Player{
+		Username: username,
+		Cards:    append(cards, new5Card),
+	}
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(player, nil),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newKCard, nil),
+		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, newKCard).Return(nil),
+		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
+	)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.ErrorIs(t, err, core.ErrBusted)
+	require.Equal(t, expected, player)
+}
+
+func TestDrawCardFromDeckToPlayer21ValueCase(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	expected := &core.Player{
+		Username: username,
+		Cards:    append(cards, new9Card),
+		Stop:     true,
+		Busted:   false,
+	}
+	player := &core.Player{
+		Username: username,
+		Cards:    cards,
+	}
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(player, nil),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(new9Card, nil),
+		repo.EXPECT().AddCardToPlayer(ctx, telegramChatID, username, new9Card).Return(nil),
+		playerServiceMock.EXPECT().StopDrawing(ctx, telegramChatID, player).Return(nil),
+	)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.NoError(t, err)
+	require.Equal(t, expected, player)
+	require.Equal(t, 21, player.Cards.CountValue())
+}
+
+func TestDrawCardFromDeckToPlayerBlackjackCase(t *testing.T) {
+	ctx, logger, repo, playerServiceMock := getCardServiceDependencies(t)
+	expected := &core.Player{
+		Username: username,
+		Cards:    blackjack,
+		Stop:     true,
+		Busted:   false,
+	}
+	gomock.InOrder(
+		playerServiceMock.EXPECT().GetPlayer(ctx, telegramChatID, username).Return(nil, core.ErrNotFound),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newACard, nil),
+		repo.EXPECT().DrawCardFromDeck(ctx, telegramChatID).Return(newKCard, nil),
+		playerServiceMock.EXPECT().AddNewPlayer(ctx, telegramChatID, *expected).Return(nil),
+	)
+	service := NewCardService(logger, repo, playerServiceMock, 1)
+
+	player, err := service.DrawCardFromDeckToPlayer(ctx, telegramChatID, username)
+
+	require.NoError(t, err)
+	require.Equal(t, expected, player)
+	require.Equal(t, 21, player.Cards.CountValue())
+	require.True(t, player.Cards.IsBlackjack())
 }

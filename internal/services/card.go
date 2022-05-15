@@ -27,6 +27,22 @@ func NewCardService(logger Logger, repo repository.Cards, playerService Players,
 	}
 }
 
+func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
+	card, err := c.drawCard(ctx, telegramChatID)
+	if err != nil {
+		c.logger.Error(err)
+
+		return card, core.ErrServerError
+	}
+	if err := c.repo.AddCardToDealer(ctx, telegramChatID, card); err != nil {
+		c.logger.Error(err)
+
+		return card, core.ErrServerError
+	}
+
+	return card, nil
+}
+
 func (c *CardService) DrawCardFromDeckToPlayer(
 	ctx context.Context,
 	telegramChatID int64,
@@ -80,22 +96,6 @@ func (c *CardService) DrawCardFromDeckToPlayer(
 	}
 
 	return player, nil
-}
-
-func (c *CardService) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
-	card, err := c.drawCard(ctx, telegramChatID)
-	if err != nil {
-		c.logger.Error(err)
-
-		return card, core.ErrServerError
-	}
-	if err := c.repo.AddCardToDealer(ctx, telegramChatID, card); err != nil {
-		c.logger.Error(err)
-
-		return card, core.ErrServerError
-	}
-
-	return card, nil
 }
 
 func (c *CardService) createNewPlayer(

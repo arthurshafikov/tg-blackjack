@@ -20,6 +20,31 @@ func NewPlayerService(logger Logger, repo repository.Players) *PlayerService {
 	}
 }
 
+func (p *PlayerService) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
+	if err := p.repo.AddNewPlayer(ctx, telegramChatID, player); err != nil {
+		p.logger.Error(err)
+
+		return core.ErrServerError
+	}
+
+	return nil
+}
+
+func (p *PlayerService) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
+	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
+	if err != nil {
+		if !errors.Is(err, core.ErrNotFound) && !errors.Is(err, core.ErrNoActiveGame) {
+			p.logger.Error(err)
+
+			return nil, core.ErrServerError
+		}
+
+		return nil, err
+	}
+
+	return player, nil
+}
+
 func (p *PlayerService) StopDrawing(
 	ctx context.Context,
 	telegramChatID int64,
@@ -48,31 +73,6 @@ func (p *PlayerService) StopDrawing(
 		}
 
 		return core.ErrNotFound
-	}
-
-	return nil
-}
-
-func (p *PlayerService) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
-	player, err := p.repo.GetPlayer(ctx, telegramChatID, username)
-	if err != nil {
-		if !errors.Is(err, core.ErrNotFound) && !errors.Is(err, core.ErrNoActiveGame) {
-			p.logger.Error(err)
-
-			return nil, core.ErrServerError
-		}
-
-		return nil, err
-	}
-
-	return player, nil
-}
-
-func (p *PlayerService) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
-	if err := p.repo.AddNewPlayer(ctx, telegramChatID, player); err != nil {
-		p.logger.Error(err)
-
-		return core.ErrServerError
 	}
 
 	return nil
