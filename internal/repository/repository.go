@@ -8,22 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Chats interface {
-	CheckChatExists(ctx context.Context, telegramChatID int64) error
-	RegisterChat(ctx context.Context, telegramChatID int64) error
-}
-
-type Statistic interface {
-	GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error)
-	SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error
-}
-
-type Games interface {
-	SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error
-	NullActiveGame(ctx context.Context, telegramChatID int64) error
-	GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
-}
-
 type Cards interface {
 	AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error
 	AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error
@@ -31,28 +15,44 @@ type Cards interface {
 	SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error
 }
 
+type Chats interface {
+	CheckChatExists(ctx context.Context, telegramChatID int64) error
+	RegisterChat(ctx context.Context, telegramChatID int64) error
+}
+
+type Games interface {
+	GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error)
+	NullActiveGame(ctx context.Context, telegramChatID int64) error
+	SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error
+}
+
 type Players interface {
 	AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error
-	SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error
 	GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error)
+	SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error
+}
+
+type Statistic interface {
+	GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error)
+	SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error
 }
 
 type Repository struct {
-	Chats
-	Statistic
-	Games
 	Cards
+	Chats
+	Games
 	Players
+	Statistic
 }
 
 func NewRepository(db *mongo.Client) *Repository {
 	chatsCollection := db.Database("homestead").Collection("chats")
 
 	return &Repository{
-		Chats:     mongodb.NewChat(chatsCollection),
-		Statistic: mongodb.NewStatistic(chatsCollection),
-		Games:     mongodb.NewGame(chatsCollection),
 		Cards:     mongodb.NewCard(chatsCollection),
+		Chats:     mongodb.NewChat(chatsCollection),
+		Games:     mongodb.NewGame(chatsCollection),
 		Players:   mongodb.NewPlayer(chatsCollection),
+		Statistic: mongodb.NewStatistic(chatsCollection),
 	}
 }

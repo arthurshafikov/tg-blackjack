@@ -34,26 +34,6 @@ func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player 
 	return nil
 }
 
-func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
-	filter := bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
-		bson.M{"active_game.players.username": player.Username},
-	}}
-	update := bson.M{"$set": bson.M{
-		"active_game.players.$.stop":   player.Stop,
-		"active_game.players.$.busted": player.Busted,
-	}}
-	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return core.ErrNotFound
-		}
-
-		return err
-	}
-
-	return nil
-}
-
 func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
 	err := p.collection.FindOne(ctx, bson.M{"$and": bson.A{
 		bson.M{"telegram_chat_id": telegramChatID},
@@ -91,4 +71,24 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 	}
 
 	return nil, core.ErrNotFound
+}
+
+func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
+	filter := bson.M{"$and": bson.A{
+		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{"active_game.players.username": player.Username},
+	}}
+	update := bson.M{"$set": bson.M{
+		"active_game.players.$.stop":   player.Stop,
+		"active_game.players.$.busted": player.Busted,
+	}}
+	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return core.ErrNotFound
+		}
+
+		return err
+	}
+
+	return nil
 }
