@@ -52,6 +52,7 @@ type Messages struct {
 
 	DealerHand      string
 	DealerBlackjack string
+	GameStartHint   string
 	GameEnterHint   string
 
 	TopPlayers string

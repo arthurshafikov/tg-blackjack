@@ -75,7 +75,7 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 			msgText += fmt.Sprintf("\n\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
 		}
 
-		msgText += fmt.Sprintf("\n\n Type /%s to start a new game", core.NewGame)
+		msgText += fmt.Sprintf("\n\n %s", c.messages.GameStartHint)
 
 		return c.sendMessage(tgbotapi.NewMessage(message.Chat.ID, msgText))
 	}

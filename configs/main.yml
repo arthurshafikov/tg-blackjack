@@ -21,6 +21,7 @@ Messages:
 
   DealerHand: "*Dealer* hand:"
   DealerBlackjack: "*Dealer* has *BLACKJACK!*"
+  GameStartHint: "Type /new command to start a new game."
   GameEnterHint: "Type /draw command to enter the game."
 
   TopPlayers: "*Top* players:"
