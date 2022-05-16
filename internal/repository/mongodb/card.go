@@ -57,7 +57,7 @@ func (c *Card) DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core
 	var card core.Card
 
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$pop": bson.M{"deck.cards": 1}}
+	update := bson.M{"$pop": bson.M{fmt.Sprintf("%s.cards", core.DeckField): 1}}
 
 	res := c.collection.FindOneAndUpdate(ctx, filter, update)
 	if err := res.Err(); err != nil {
@@ -78,7 +78,7 @@ func (c *Card) DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core
 
 func (c *Card) SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$set": bson.M{"deck": deck}}
+	update := bson.M{"$set": bson.M{core.DeckField: deck}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

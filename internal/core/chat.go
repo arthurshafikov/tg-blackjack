@@ -4,6 +4,7 @@ const (
 	TelegramChatIDField = "telegram_chat_id"
 	ActiveGameField     = "active_game"
 	StatisticsField     = "statistics"
+	DeckField           = "deck"
 )
 
 type Chat struct {
