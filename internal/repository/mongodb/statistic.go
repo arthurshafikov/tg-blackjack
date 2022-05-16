@@ -44,7 +44,7 @@ func (s *Statistic) SetStatistics(
 	stats core.UsersStatistics,
 ) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$set": bson.M{"statistics": stats}}
+	update := bson.M{"$set": bson.M{core.StatisticsField: stats}}
 	res := s.collection.FindOneAndUpdate(ctx, filter, update)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
