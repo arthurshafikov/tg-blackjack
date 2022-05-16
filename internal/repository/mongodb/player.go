@@ -22,7 +22,7 @@ func NewPlayer(collection *mongo.Collection) *Player {
 
 func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.players", core.ActiveGameField): player}}
+	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.%s", core.ActiveGameField, core.GamePlayersField): player}}
 
 	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err == nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -49,7 +49,14 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 
 	filter := bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{fmt.Sprintf("%s.players.username", core.ActiveGameField): username},
+		bson.M{
+			fmt.Sprintf(
+				"%s.%s.%s",
+				core.ActiveGameField,
+				core.GamePlayersField,
+				core.GamePlayerUsernameField,
+			): username,
+		},
 	}}
 	res := p.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
@@ -77,11 +84,28 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{fmt.Sprintf("%s.players.username", core.ActiveGameField): player.Username},
+		bson.M{
+			fmt.Sprintf(
+				"%s.%s.%s",
+				core.ActiveGameField,
+				core.GamePlayersField,
+				core.GamePlayerUsernameField,
+			): player.Username,
+		},
 	}}
 	update := bson.M{"$set": bson.M{
-		fmt.Sprintf("%s.players.$.stop", core.ActiveGameField):   player.Stop,
-		fmt.Sprintf("%s.players.$.busted", core.ActiveGameField): player.Busted,
+		fmt.Sprintf(
+			"%s.%s.$.%s",
+			core.ActiveGameField,
+			core.GamePlayersField,
+			core.GamePlayerStopField,
+		): player.Stop,
+		fmt.Sprintf(
+			"%s.%s.$.%s",
+			core.ActiveGameField,
+			core.GamePlayersField,
+			core.GamePlayerBustedField,
+		): player.Busted,
 	}}
 	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

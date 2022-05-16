@@ -1,7 +1,12 @@
 package core
 
 const (
-	GameDealerField = "dealer"
+	GameDealerField         = "dealer"
+	GamePlayersField        = "players"
+	GamePlayerUsernameField = "username"
+	GamePlayerCardsField    = "cards"
+	GamePlayerStopField     = "stop"
+	GamePlayerBustedField   = "busted"
 )
 
 type Game struct {
