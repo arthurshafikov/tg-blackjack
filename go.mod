@@ -1,7 +1,6 @@
-// +heroku goVersion 1.18
-
 module github.com/arthurshafikov/tg-blackjack
 
+// +heroku goVersion 1.18
 go 1.18
 
 require (
