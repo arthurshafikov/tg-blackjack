@@ -68,6 +68,9 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 		if errors.Is(err, core.ErrNoActiveGame) {
 			return fmt.Errorf(c.messages.ChatHasNoActiveGame)
 		}
+		if errors.Is(err, core.ErrNotFound) {
+			return fmt.Errorf(c.messages.GameEnterHint)
+		}
 
 		return err
 	}
