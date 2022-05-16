@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,7 +22,7 @@ func NewCard(collection *mongo.Collection) *Card {
 
 func (c *Card) AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$push": bson.M{"active_game.dealer": card}}
+	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.dealer", core.ActiveGameField): card}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -37,9 +38,9 @@ func (c *Card) AddCardToDealer(ctx context.Context, telegramChatID int64, card c
 func (c *Card) AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{"active_game.players.username": username},
+		bson.M{fmt.Sprintf("%s.players.username", core.ActiveGameField): username},
 	}}
-	update := bson.M{"$push": bson.M{"active_game.players.$.cards": card}}
+	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.players.$.cards", core.ActiveGameField): card}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

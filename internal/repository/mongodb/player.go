@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,7 +22,7 @@ func NewPlayer(collection *mongo.Collection) *Player {
 
 func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$push": bson.M{"active_game.players": player}}
+	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.players", core.ActiveGameField): player}}
 
 	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err == nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -37,7 +38,7 @@ func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player 
 func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
 	err := p.collection.FindOne(ctx, bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{"active_game": nil},
+		bson.M{core.ActiveGameField: nil},
 	}}).Err()
 	if err == nil {
 		return nil, core.ErrNoActiveGame
@@ -48,7 +49,7 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 
 	filter := bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{"active_game.players.username": username},
+		bson.M{fmt.Sprintf("%s.players.username", core.ActiveGameField): username},
 	}}
 	res := p.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
@@ -76,11 +77,11 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
 	filter := bson.M{"$and": bson.A{
 		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{"active_game.players.username": player.Username},
+		bson.M{fmt.Sprintf("%s.players.username", core.ActiveGameField): player.Username},
 	}}
 	update := bson.M{"$set": bson.M{
-		"active_game.players.$.stop":   player.Stop,
-		"active_game.players.$.busted": player.Busted,
+		fmt.Sprintf("%s.players.$.stop", core.ActiveGameField):   player.Stop,
+		fmt.Sprintf("%s.players.$.busted", core.ActiveGameField): player.Busted,
 	}}
 	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

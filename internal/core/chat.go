@@ -2,6 +2,7 @@ package core
 
 const (
 	TelegramChatIDField = "telegram_chat_id"
+	ActiveGameField     = "active_game"
 )
 
 type Chat struct {
