@@ -22,7 +22,7 @@ func NewCard(collection *mongo.Collection) *Card {
 
 func (c *Card) AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.dealer", core.ActiveGameField): card}}
+	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.%s", core.ActiveGameField, core.GameDealerField): card}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

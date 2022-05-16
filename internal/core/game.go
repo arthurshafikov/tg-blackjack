@@ -1,5 +1,9 @@
 package core
 
+const (
+	GameDealerField = "dealer"
+)
+
 type Game struct {
 	Dealer  Cards    `bson:"dealer"`
 	Players []Player `bson:"players"`
