@@ -21,7 +21,7 @@ func NewChat(collection *mongo.Collection) *Chat {
 }
 
 func (c *Chat) CheckChatExists(ctx context.Context, telegramChatID int64) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	res := c.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -36,7 +36,7 @@ func (c *Chat) CheckChatExists(ctx context.Context, telegramChatID int64) error 
 
 func (c *Chat) RegisterChat(ctx context.Context, telegramChatID int64) error {
 	filter := bson.M{
-		"telegram_chat_id": telegramChatID,
+		core.TelegramChatIDField: telegramChatID,
 	}
 	chat := core.Chat{
 		TelegramChatID: telegramChatID,

@@ -20,7 +20,7 @@ func NewPlayer(collection *mongo.Collection) *Player {
 }
 
 func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player core.Player) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$push": bson.M{"active_game.players": player}}
 
 	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err == nil {
@@ -36,7 +36,7 @@ func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player 
 
 func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
 	err := p.collection.FindOne(ctx, bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{core.TelegramChatIDField: telegramChatID},
 		bson.M{"active_game": nil},
 	}}).Err()
 	if err == nil {
@@ -47,7 +47,7 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 	}
 
 	filter := bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{core.TelegramChatIDField: telegramChatID},
 		bson.M{"active_game.players.username": username},
 	}}
 	res := p.collection.FindOne(ctx, filter)
@@ -75,7 +75,7 @@ func (p *Player) GetPlayer(ctx context.Context, telegramChatID int64, username s
 
 func (p *Player) SetPlayerStopAndBusted(ctx context.Context, telegramChatID int64, player *core.Player) error {
 	filter := bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{core.TelegramChatIDField: telegramChatID},
 		bson.M{"active_game.players.username": player.Username},
 	}}
 	update := bson.M{"$set": bson.M{

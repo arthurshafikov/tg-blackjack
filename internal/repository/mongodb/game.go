@@ -22,7 +22,7 @@ func NewGame(collection *mongo.Collection) *Game {
 func (g *Game) GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
 	var chat core.Chat
 
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	res := g.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -39,7 +39,7 @@ func (g *Game) GetActiveGame(ctx context.Context, telegramChatID int64) (*core.G
 }
 
 func (g *Game) NullActiveGame(ctx context.Context, telegramChatID int64) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$set": bson.M{"active_game": nil}}
 	if err := g.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -54,7 +54,7 @@ func (g *Game) NullActiveGame(ctx context.Context, telegramChatID int64) error {
 
 func (g *Game) SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error {
 	filter := bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{core.TelegramChatIDField: telegramChatID},
 		bson.M{"active_game": nil},
 	}}
 	if err := g.collection.FindOne(ctx, filter).Err(); err != nil {

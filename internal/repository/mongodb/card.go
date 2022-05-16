@@ -20,7 +20,7 @@ func NewCard(collection *mongo.Collection) *Card {
 }
 
 func (c *Card) AddCardToDealer(ctx context.Context, telegramChatID int64, card core.Card) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$push": bson.M{"active_game.dealer": card}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
@@ -36,7 +36,7 @@ func (c *Card) AddCardToDealer(ctx context.Context, telegramChatID int64, card c
 
 func (c *Card) AddCardToPlayer(ctx context.Context, telegramChatID int64, username string, card core.Card) error {
 	filter := bson.M{"$and": bson.A{
-		bson.M{"telegram_chat_id": telegramChatID},
+		bson.M{core.TelegramChatIDField: telegramChatID},
 		bson.M{"active_game.players.username": username},
 	}}
 	update := bson.M{"$push": bson.M{"active_game.players.$.cards": card}}
@@ -55,7 +55,7 @@ func (c *Card) AddCardToPlayer(ctx context.Context, telegramChatID int64, userna
 func (c *Card) DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core.Card, error) {
 	var card core.Card
 
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$pop": bson.M{"deck.cards": 1}}
 
 	res := c.collection.FindOneAndUpdate(ctx, filter, update)
@@ -76,7 +76,7 @@ func (c *Card) DrawCardFromDeck(ctx context.Context, telegramChatID int64) (core
 }
 
 func (c *Card) SetNewDeck(ctx context.Context, telegramChatID int64, deck *core.Deck) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$set": bson.M{"deck": deck}}
 
 	if err := c.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {

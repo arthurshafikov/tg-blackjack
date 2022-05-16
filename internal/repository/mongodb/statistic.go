@@ -20,7 +20,7 @@ func NewStatistic(collection *mongo.Collection) *Statistic {
 }
 
 func (s *Statistic) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	res := s.collection.FindOne(ctx, filter)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -43,7 +43,7 @@ func (s *Statistic) SetStatistics(
 	telegramChatID int64,
 	stats core.UsersStatistics,
 ) error {
-	filter := bson.M{"telegram_chat_id": telegramChatID}
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$set": bson.M{"statistics": stats}}
 	res := s.collection.FindOneAndUpdate(ctx, filter, update)
 	if err := res.Err(); err != nil {

@@ -52,7 +52,7 @@ func (s *APITestSuite) TestExactCardsFromDeck() {
 
 func (s *APITestSuite) getDeck() *core.Deck {
 	var chat core.Chat
-	res := s.collection.FindOne(s.ctx, bson.M{"telegram_chat_id": telegramChatID})
+	res := s.collection.FindOne(s.ctx, bson.M{core.TelegramChatIDField: telegramChatID})
 	r.NoError(res.Err())
 	r.NoError(res.Decode(&chat))
 
