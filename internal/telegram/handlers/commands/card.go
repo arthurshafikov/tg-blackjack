@@ -39,7 +39,6 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	}
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
-	msg.ReplyToMessageID = message.MessageID
 
 	if err := c.sendMessage(msg); err != nil {
 		return err
@@ -78,7 +77,6 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 	msgText += fmt.Sprintf(c.messages.StoppedDrawing+"\n", c.escapeUnderscoreUsername(message.From.UserName))
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
-	msg.ReplyToMessageID = message.MessageID
 
 	if err := c.sendMessage(msg); err != nil {
 		return err
