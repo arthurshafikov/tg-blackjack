@@ -56,6 +56,7 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 		for _, card := range game.Dealer {
 			msgText += card.ToString() + " "
 		}
+		msgText += "\n"
 
 		for username, result := range gameStats {
 			var resultText string
@@ -72,7 +73,7 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 				log.Println("wrong value for result")
 			}
 
-			msgText += fmt.Sprintf("\n\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
+			msgText += fmt.Sprintf("\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
 		}
 
 		msgText += fmt.Sprintf("\n\n %s", c.messages.GameStartHint)
