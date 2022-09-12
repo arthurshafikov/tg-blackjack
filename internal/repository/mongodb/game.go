@@ -53,23 +53,27 @@ func (g *Game) NullActiveGame(ctx context.Context, telegramChatID int64) error {
 }
 
 func (g *Game) SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error {
-	filter := bson.M{"$and": bson.A{
-		bson.M{core.TelegramChatIDField: telegramChatID},
-		bson.M{core.ActiveGameField: nil},
-	}}
-	if err := g.collection.FindOne(ctx, filter).Err(); err != nil {
+	var chat core.Chat
+
+	filter := bson.M{core.TelegramChatIDField: telegramChatID}
+	res := g.collection.FindOne(ctx, filter)
+	if err := res.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return core.ErrActiveGame
+			return core.ErrNotFound
 		}
 
 		return err
 	}
 
-	update := bson.M{"$set": bson.M{core.ActiveGameField: game}}
-	err := g.collection.FindOneAndUpdate(ctx, filter, update).Err()
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return core.ErrNotFound
+	if err := res.Decode(&chat); err != nil {
+		return err
 	}
 
-	return err
+	if chat.ActiveGame != nil {
+		return core.ErrActiveGame
+	}
+
+	update := bson.M{"$set": bson.M{core.ActiveGameField: game}}
+
+	return g.collection.FindOneAndUpdate(ctx, filter, update).Err()
 }
