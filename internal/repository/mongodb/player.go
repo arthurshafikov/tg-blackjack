@@ -24,7 +24,7 @@ func (p *Player) AddNewPlayer(ctx context.Context, telegramChatID int64, player 
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$push": bson.M{fmt.Sprintf("%s.%s", core.ActiveGameField, core.GamePlayersField): player}}
 
-	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err == nil {
+	if err := p.collection.FindOneAndUpdate(ctx, filter, update).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound
 		}
