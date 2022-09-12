@@ -22,8 +22,7 @@ func NewChat(collection *mongo.Collection) *Chat {
 
 func (c *Chat) CheckChatExists(ctx context.Context, telegramChatID int64) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
-	res := c.collection.FindOne(ctx, filter)
-	if err := res.Err(); err != nil {
+	if err := c.collection.FindOne(ctx, filter).Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return core.ErrNotFound
 		}
