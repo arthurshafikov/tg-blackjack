@@ -11,13 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
 
-var (
-	statistics = core.UsersStatistics{
-		"someUser1": 11,
-		"someUser2": -34,
-		"someUser3": 2,
-	}
-)
+var statistics = core.UsersStatistics{
+	"someUser1": 11,
+	"someUser2": -34,
+	"someUser3": 2,
+}
 
 func getStatisticRepo(mt *mtest.T) (context.Context, *Statistic) {
 	mt.Helper()
