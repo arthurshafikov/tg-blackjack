@@ -38,11 +38,7 @@ func (s *Statistic) GetStatistics(ctx context.Context, telegramChatID int64) (co
 	return chat.Statistics, nil
 }
 
-func (s *Statistic) SetStatistics(
-	ctx context.Context,
-	telegramChatID int64,
-	stats core.UsersStatistics,
-) error {
+func (s *Statistic) SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error {
 	filter := bson.M{core.TelegramChatIDField: telegramChatID}
 	update := bson.M{"$set": bson.M{core.StatisticsField: stats}}
 	res := s.collection.FindOneAndUpdate(ctx, filter, update)
