@@ -7,7 +7,6 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
 	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers/commands"
-	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers/queries"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -17,7 +16,6 @@ type Bot struct {
 	services *services.Services
 
 	commandHandler *commands.CommandHandler
-	queryHandler   *queries.QueryHandler
 
 	messages config.Messages
 }
@@ -29,7 +27,6 @@ func NewBot(
 	messages config.Messages,
 ) *Bot {
 	commandHandler := commands.NewCommandHandler(ctx, bot, services, messages)
-	queryHandler := queries.NewQueryHandler(ctx, bot, services, messages)
 
 	return &Bot{
 		ctx:      ctx,
@@ -37,7 +34,6 @@ func NewBot(
 		services: services,
 
 		commandHandler: commandHandler,
-		queryHandler:   queryHandler,
 
 		messages: messages,
 	}
