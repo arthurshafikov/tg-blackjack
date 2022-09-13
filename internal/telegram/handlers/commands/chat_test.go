@@ -74,8 +74,10 @@ func TestHandleStats(t *testing.T) {
 	responseConfig := tgbotapi.NewMessage(chatID, c.messages.ChatCreatedSuccessfully)
 	gomock.InOrder(
 		mockBag.Statistics.EXPECT().GetStatistics(c.ctx, chatID).Return(stats, nil),
-		mockBag.Helper.EXPECT().NewMessage(chatID, "TopPlayers\n\n*1.* @someUser1 — 22 points\n*2.* @someUser2 — -4 points\n").
-			Return(responseConfig),
+		mockBag.Helper.EXPECT().NewMessage(
+			chatID,
+			"TopPlayers\n\n*1.* @someUser1 — 22 points\n*2.* @someUser2 — -4 points\n",
+		).Return(responseConfig),
 		mockBag.Helper.EXPECT().SendMessage(responseConfig).Return(nil),
 	)
 
@@ -100,8 +102,10 @@ func TestHandleStatsSendMessageReturnsError(t *testing.T) {
 	responseConfig := tgbotapi.NewMessage(chatID, c.messages.ChatCreatedSuccessfully)
 	gomock.InOrder(
 		mockBag.Statistics.EXPECT().GetStatistics(c.ctx, chatID).Return(stats, nil),
-		mockBag.Helper.EXPECT().NewMessage(chatID, "TopPlayers\n\n*1.* @someUser1 — 22 points\n*2.* @someUser2 — -4 points\n").
-			Return(responseConfig),
+		mockBag.Helper.EXPECT().NewMessage(
+			chatID,
+			"TopPlayers\n\n*1.* @someUser1 — 22 points\n*2.* @someUser2 — -4 points\n",
+		).Return(responseConfig),
 		mockBag.Helper.EXPECT().SendMessage(responseConfig).Return(core.ErrServerError),
 		mockBag.Logger.EXPECT().Error(gomock.Any()),
 	)
