@@ -12,175 +12,6 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockChats is a mock of Chats interface.
-type MockChats struct {
-	ctrl     *gomock.Controller
-	recorder *MockChatsMockRecorder
-}
-
-// MockChatsMockRecorder is the mock recorder for MockChats.
-type MockChatsMockRecorder struct {
-	mock *MockChats
-}
-
-// NewMockChats creates a new mock instance.
-func NewMockChats(ctrl *gomock.Controller) *MockChats {
-	mock := &MockChats{ctrl: ctrl}
-	mock.recorder = &MockChatsMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockChats) EXPECT() *MockChatsMockRecorder {
-	return m.recorder
-}
-
-// CheckChatExists mocks base method.
-func (m *MockChats) CheckChatExists(ctx context.Context, telegramChatID int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckChatExists", ctx, telegramChatID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CheckChatExists indicates an expected call of CheckChatExists.
-func (mr *MockChatsMockRecorder) CheckChatExists(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckChatExists", reflect.TypeOf((*MockChats)(nil).CheckChatExists), ctx, telegramChatID)
-}
-
-// RegisterChat mocks base method.
-func (m *MockChats) RegisterChat(ctx context.Context, telegramChatID int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RegisterChat", ctx, telegramChatID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RegisterChat indicates an expected call of RegisterChat.
-func (mr *MockChatsMockRecorder) RegisterChat(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterChat", reflect.TypeOf((*MockChats)(nil).RegisterChat), ctx, telegramChatID)
-}
-
-// MockStatistic is a mock of Statistic interface.
-type MockStatistic struct {
-	ctrl     *gomock.Controller
-	recorder *MockStatisticMockRecorder
-}
-
-// MockStatisticMockRecorder is the mock recorder for MockStatistic.
-type MockStatisticMockRecorder struct {
-	mock *MockStatistic
-}
-
-// NewMockStatistic creates a new mock instance.
-func NewMockStatistic(ctrl *gomock.Controller) *MockStatistic {
-	mock := &MockStatistic{ctrl: ctrl}
-	mock.recorder = &MockStatisticMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockStatistic) EXPECT() *MockStatisticMockRecorder {
-	return m.recorder
-}
-
-// GetStatistics mocks base method.
-func (m *MockStatistic) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStatistics", ctx, telegramChatID)
-	ret0, _ := ret[0].(core.UsersStatistics)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetStatistics indicates an expected call of GetStatistics.
-func (mr *MockStatisticMockRecorder) GetStatistics(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatistics", reflect.TypeOf((*MockStatistic)(nil).GetStatistics), ctx, telegramChatID)
-}
-
-// SetStatistics mocks base method.
-func (m *MockStatistic) SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetStatistics", ctx, telegramChatID, stats)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SetStatistics indicates an expected call of SetStatistics.
-func (mr *MockStatisticMockRecorder) SetStatistics(ctx, telegramChatID, stats interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetStatistics", reflect.TypeOf((*MockStatistic)(nil).SetStatistics), ctx, telegramChatID, stats)
-}
-
-// MockGames is a mock of Games interface.
-type MockGames struct {
-	ctrl     *gomock.Controller
-	recorder *MockGamesMockRecorder
-}
-
-// MockGamesMockRecorder is the mock recorder for MockGames.
-type MockGamesMockRecorder struct {
-	mock *MockGames
-}
-
-// NewMockGames creates a new mock instance.
-func NewMockGames(ctrl *gomock.Controller) *MockGames {
-	mock := &MockGames{ctrl: ctrl}
-	mock.recorder = &MockGamesMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockGames) EXPECT() *MockGamesMockRecorder {
-	return m.recorder
-}
-
-// GetActiveGame mocks base method.
-func (m *MockGames) GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetActiveGame", ctx, telegramChatID)
-	ret0, _ := ret[0].(*core.Game)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetActiveGame indicates an expected call of GetActiveGame.
-func (mr *MockGamesMockRecorder) GetActiveGame(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActiveGame", reflect.TypeOf((*MockGames)(nil).GetActiveGame), ctx, telegramChatID)
-}
-
-// NullActiveGame mocks base method.
-func (m *MockGames) NullActiveGame(ctx context.Context, telegramChatID int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NullActiveGame", ctx, telegramChatID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// NullActiveGame indicates an expected call of NullActiveGame.
-func (mr *MockGamesMockRecorder) NullActiveGame(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NullActiveGame", reflect.TypeOf((*MockGames)(nil).NullActiveGame), ctx, telegramChatID)
-}
-
-// SetActiveGame mocks base method.
-func (m *MockGames) SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetActiveGame", ctx, telegramChatID, game)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SetActiveGame indicates an expected call of SetActiveGame.
-func (mr *MockGamesMockRecorder) SetActiveGame(ctx, telegramChatID, game interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetActiveGame", reflect.TypeOf((*MockGames)(nil).SetActiveGame), ctx, telegramChatID, game)
-}
-
 // MockCards is a mock of Cards interface.
 type MockCards struct {
 	ctrl     *gomock.Controller
@@ -261,6 +92,123 @@ func (mr *MockCardsMockRecorder) SetNewDeck(ctx, telegramChatID, deck interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetNewDeck", reflect.TypeOf((*MockCards)(nil).SetNewDeck), ctx, telegramChatID, deck)
 }
 
+// MockChats is a mock of Chats interface.
+type MockChats struct {
+	ctrl     *gomock.Controller
+	recorder *MockChatsMockRecorder
+}
+
+// MockChatsMockRecorder is the mock recorder for MockChats.
+type MockChatsMockRecorder struct {
+	mock *MockChats
+}
+
+// NewMockChats creates a new mock instance.
+func NewMockChats(ctrl *gomock.Controller) *MockChats {
+	mock := &MockChats{ctrl: ctrl}
+	mock.recorder = &MockChatsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockChats) EXPECT() *MockChatsMockRecorder {
+	return m.recorder
+}
+
+// CheckChatExists mocks base method.
+func (m *MockChats) CheckChatExists(ctx context.Context, telegramChatID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckChatExists", ctx, telegramChatID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CheckChatExists indicates an expected call of CheckChatExists.
+func (mr *MockChatsMockRecorder) CheckChatExists(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckChatExists", reflect.TypeOf((*MockChats)(nil).CheckChatExists), ctx, telegramChatID)
+}
+
+// RegisterChat mocks base method.
+func (m *MockChats) RegisterChat(ctx context.Context, telegramChatID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterChat", ctx, telegramChatID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RegisterChat indicates an expected call of RegisterChat.
+func (mr *MockChatsMockRecorder) RegisterChat(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterChat", reflect.TypeOf((*MockChats)(nil).RegisterChat), ctx, telegramChatID)
+}
+
+// MockGames is a mock of Games interface.
+type MockGames struct {
+	ctrl     *gomock.Controller
+	recorder *MockGamesMockRecorder
+}
+
+// MockGamesMockRecorder is the mock recorder for MockGames.
+type MockGamesMockRecorder struct {
+	mock *MockGames
+}
+
+// NewMockGames creates a new mock instance.
+func NewMockGames(ctrl *gomock.Controller) *MockGames {
+	mock := &MockGames{ctrl: ctrl}
+	mock.recorder = &MockGamesMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGames) EXPECT() *MockGamesMockRecorder {
+	return m.recorder
+}
+
+// GetActiveGame mocks base method.
+func (m *MockGames) GetActiveGame(ctx context.Context, telegramChatID int64) (*core.Game, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetActiveGame", ctx, telegramChatID)
+	ret0, _ := ret[0].(*core.Game)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetActiveGame indicates an expected call of GetActiveGame.
+func (mr *MockGamesMockRecorder) GetActiveGame(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActiveGame", reflect.TypeOf((*MockGames)(nil).GetActiveGame), ctx, telegramChatID)
+}
+
+// NullActiveGame mocks base method.
+func (m *MockGames) NullActiveGame(ctx context.Context, telegramChatID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NullActiveGame", ctx, telegramChatID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// NullActiveGame indicates an expected call of NullActiveGame.
+func (mr *MockGamesMockRecorder) NullActiveGame(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NullActiveGame", reflect.TypeOf((*MockGames)(nil).NullActiveGame), ctx, telegramChatID)
+}
+
+// SetActiveGame mocks base method.
+func (m *MockGames) SetActiveGame(ctx context.Context, telegramChatID int64, game core.Game) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetActiveGame", ctx, telegramChatID, game)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetActiveGame indicates an expected call of SetActiveGame.
+func (mr *MockGamesMockRecorder) SetActiveGame(ctx, telegramChatID, game interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetActiveGame", reflect.TypeOf((*MockGames)(nil).SetActiveGame), ctx, telegramChatID, game)
+}
+
 // MockPlayers is a mock of Players interface.
 type MockPlayers struct {
 	ctrl     *gomock.Controller
@@ -325,4 +273,56 @@ func (m *MockPlayers) SetPlayerStopAndBusted(ctx context.Context, telegramChatID
 func (mr *MockPlayersMockRecorder) SetPlayerStopAndBusted(ctx, telegramChatID, player interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetPlayerStopAndBusted", reflect.TypeOf((*MockPlayers)(nil).SetPlayerStopAndBusted), ctx, telegramChatID, player)
+}
+
+// MockStatistic is a mock of Statistic interface.
+type MockStatistic struct {
+	ctrl     *gomock.Controller
+	recorder *MockStatisticMockRecorder
+}
+
+// MockStatisticMockRecorder is the mock recorder for MockStatistic.
+type MockStatisticMockRecorder struct {
+	mock *MockStatistic
+}
+
+// NewMockStatistic creates a new mock instance.
+func NewMockStatistic(ctrl *gomock.Controller) *MockStatistic {
+	mock := &MockStatistic{ctrl: ctrl}
+	mock.recorder = &MockStatisticMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStatistic) EXPECT() *MockStatisticMockRecorder {
+	return m.recorder
+}
+
+// GetStatistics mocks base method.
+func (m *MockStatistic) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStatistics", ctx, telegramChatID)
+	ret0, _ := ret[0].(core.UsersStatistics)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStatistics indicates an expected call of GetStatistics.
+func (mr *MockStatisticMockRecorder) GetStatistics(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatistics", reflect.TypeOf((*MockStatistic)(nil).GetStatistics), ctx, telegramChatID)
+}
+
+// SetStatistics mocks base method.
+func (m *MockStatistic) SetStatistics(ctx context.Context, telegramChatID int64, stats core.UsersStatistics) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetStatistics", ctx, telegramChatID, stats)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetStatistics indicates an expected call of SetStatistics.
+func (mr *MockStatisticMockRecorder) SetStatistics(ctx, telegramChatID, stats interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetStatistics", reflect.TypeOf((*MockStatistic)(nil).SetStatistics), ctx, telegramChatID, stats)
 }

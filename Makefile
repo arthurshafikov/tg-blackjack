@@ -30,6 +30,8 @@ down:
 mocks:
 	mockgen -source=./internal/repository/repository.go -destination ./internal/repository/mocks/mock.go
 	mockgen -source=./internal/services/service.go -destination ./internal/services/mocks/mock.go
+	mockgen -source=./internal/telegram/handlers/helper.go -destination ./internal/telegram/handlers/mocks/mock.go
+	mockgen -source=./internal/telegram/telegram.go -destination ./internal/telegram/mocks/mock.go
 
 integration-tests:
 	docker-compose -f ${DOCKER_COMPOSE_TEST_FILE}  -p ${APP_TEST_NAME} up --build --abort-on-container-exit --exit-code-from app

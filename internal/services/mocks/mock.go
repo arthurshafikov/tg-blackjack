@@ -12,6 +12,59 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
+// MockCards is a mock of Cards interface.
+type MockCards struct {
+	ctrl     *gomock.Controller
+	recorder *MockCardsMockRecorder
+}
+
+// MockCardsMockRecorder is the mock recorder for MockCards.
+type MockCardsMockRecorder struct {
+	mock *MockCards
+}
+
+// NewMockCards creates a new mock instance.
+func NewMockCards(ctrl *gomock.Controller) *MockCards {
+	mock := &MockCards{ctrl: ctrl}
+	mock.recorder = &MockCardsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCards) EXPECT() *MockCardsMockRecorder {
+	return m.recorder
+}
+
+// DrawCardFromDeckToDealer mocks base method.
+func (m *MockCards) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DrawCardFromDeckToDealer", ctx, telegramChatID)
+	ret0, _ := ret[0].(core.Card)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DrawCardFromDeckToDealer indicates an expected call of DrawCardFromDeckToDealer.
+func (mr *MockCardsMockRecorder) DrawCardFromDeckToDealer(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToDealer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToDealer), ctx, telegramChatID)
+}
+
+// DrawCardFromDeckToPlayer mocks base method.
+func (m *MockCards) DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DrawCardFromDeckToPlayer", ctx, telegramChatID, username)
+	ret0, _ := ret[0].(*core.Player)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DrawCardFromDeckToPlayer indicates an expected call of DrawCardFromDeckToPlayer.
+func (mr *MockCardsMockRecorder) DrawCardFromDeckToPlayer(ctx, telegramChatID, username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToPlayer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToPlayer), ctx, telegramChatID, username)
+}
+
 // MockChats is a mock of Chats interface.
 type MockChats struct {
 	ctrl     *gomock.Controller
@@ -61,58 +114,6 @@ func (m *MockChats) RegisterChat(ctx context.Context, telegramChatID int64) erro
 func (mr *MockChatsMockRecorder) RegisterChat(ctx, telegramChatID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterChat", reflect.TypeOf((*MockChats)(nil).RegisterChat), ctx, telegramChatID)
-}
-
-// MockStatistics is a mock of Statistics interface.
-type MockStatistics struct {
-	ctrl     *gomock.Controller
-	recorder *MockStatisticsMockRecorder
-}
-
-// MockStatisticsMockRecorder is the mock recorder for MockStatistics.
-type MockStatisticsMockRecorder struct {
-	mock *MockStatistics
-}
-
-// NewMockStatistics creates a new mock instance.
-func NewMockStatistics(ctrl *gomock.Controller) *MockStatistics {
-	mock := &MockStatistics{ctrl: ctrl}
-	mock.recorder = &MockStatisticsMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockStatistics) EXPECT() *MockStatisticsMockRecorder {
-	return m.recorder
-}
-
-// GetStatistics mocks base method.
-func (m *MockStatistics) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStatistics", ctx, telegramChatID)
-	ret0, _ := ret[0].(core.UsersStatistics)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetStatistics indicates an expected call of GetStatistics.
-func (mr *MockStatisticsMockRecorder) GetStatistics(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatistics", reflect.TypeOf((*MockStatistics)(nil).GetStatistics), ctx, telegramChatID)
-}
-
-// IncrementStatistic mocks base method.
-func (m *MockStatistics) IncrementStatistic(ctx context.Context, telegramChatID int64, gameResult core.UsersStatistics) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IncrementStatistic", ctx, telegramChatID, gameResult)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// IncrementStatistic indicates an expected call of IncrementStatistic.
-func (mr *MockStatisticsMockRecorder) IncrementStatistic(ctx, telegramChatID, gameResult interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementStatistic", reflect.TypeOf((*MockStatistics)(nil).IncrementStatistic), ctx, telegramChatID, gameResult)
 }
 
 // MockGames is a mock of Games interface.
@@ -184,59 +185,6 @@ func (mr *MockGamesMockRecorder) NewGame(ctx, telegramChatID interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewGame", reflect.TypeOf((*MockGames)(nil).NewGame), ctx, telegramChatID)
 }
 
-// MockCards is a mock of Cards interface.
-type MockCards struct {
-	ctrl     *gomock.Controller
-	recorder *MockCardsMockRecorder
-}
-
-// MockCardsMockRecorder is the mock recorder for MockCards.
-type MockCardsMockRecorder struct {
-	mock *MockCards
-}
-
-// NewMockCards creates a new mock instance.
-func NewMockCards(ctrl *gomock.Controller) *MockCards {
-	mock := &MockCards{ctrl: ctrl}
-	mock.recorder = &MockCardsMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockCards) EXPECT() *MockCardsMockRecorder {
-	return m.recorder
-}
-
-// DrawCardFromDeckToDealer mocks base method.
-func (m *MockCards) DrawCardFromDeckToDealer(ctx context.Context, telegramChatID int64) (core.Card, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DrawCardFromDeckToDealer", ctx, telegramChatID)
-	ret0, _ := ret[0].(core.Card)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DrawCardFromDeckToDealer indicates an expected call of DrawCardFromDeckToDealer.
-func (mr *MockCardsMockRecorder) DrawCardFromDeckToDealer(ctx, telegramChatID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToDealer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToDealer), ctx, telegramChatID)
-}
-
-// DrawCardFromDeckToPlayer mocks base method.
-func (m *MockCards) DrawCardFromDeckToPlayer(ctx context.Context, telegramChatID int64, username string) (*core.Player, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DrawCardFromDeckToPlayer", ctx, telegramChatID, username)
-	ret0, _ := ret[0].(*core.Player)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DrawCardFromDeckToPlayer indicates an expected call of DrawCardFromDeckToPlayer.
-func (mr *MockCardsMockRecorder) DrawCardFromDeckToPlayer(ctx, telegramChatID, username interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DrawCardFromDeckToPlayer", reflect.TypeOf((*MockCards)(nil).DrawCardFromDeckToPlayer), ctx, telegramChatID, username)
-}
-
 // MockPlayers is a mock of Players interface.
 type MockPlayers struct {
 	ctrl     *gomock.Controller
@@ -301,6 +249,58 @@ func (m *MockPlayers) StopDrawing(ctx context.Context, telegramChatID int64, pla
 func (mr *MockPlayersMockRecorder) StopDrawing(ctx, telegramChatID, player interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StopDrawing", reflect.TypeOf((*MockPlayers)(nil).StopDrawing), ctx, telegramChatID, player)
+}
+
+// MockStatistics is a mock of Statistics interface.
+type MockStatistics struct {
+	ctrl     *gomock.Controller
+	recorder *MockStatisticsMockRecorder
+}
+
+// MockStatisticsMockRecorder is the mock recorder for MockStatistics.
+type MockStatisticsMockRecorder struct {
+	mock *MockStatistics
+}
+
+// NewMockStatistics creates a new mock instance.
+func NewMockStatistics(ctrl *gomock.Controller) *MockStatistics {
+	mock := &MockStatistics{ctrl: ctrl}
+	mock.recorder = &MockStatisticsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStatistics) EXPECT() *MockStatisticsMockRecorder {
+	return m.recorder
+}
+
+// GetStatistics mocks base method.
+func (m *MockStatistics) GetStatistics(ctx context.Context, telegramChatID int64) (core.UsersStatistics, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStatistics", ctx, telegramChatID)
+	ret0, _ := ret[0].(core.UsersStatistics)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStatistics indicates an expected call of GetStatistics.
+func (mr *MockStatisticsMockRecorder) GetStatistics(ctx, telegramChatID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatistics", reflect.TypeOf((*MockStatistics)(nil).GetStatistics), ctx, telegramChatID)
+}
+
+// IncrementStatistic mocks base method.
+func (m *MockStatistics) IncrementStatistic(ctx context.Context, telegramChatID int64, gameResult core.UsersStatistics) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IncrementStatistic", ctx, telegramChatID, gameResult)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// IncrementStatistic indicates an expected call of IncrementStatistic.
+func (mr *MockStatisticsMockRecorder) IncrementStatistic(ctx, telegramChatID, gameResult interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncrementStatistic", reflect.TypeOf((*MockStatistics)(nil).IncrementStatistic), ctx, telegramChatID, gameResult)
 }
 
 // MockLogger is a mock of Logger interface.
