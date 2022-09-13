@@ -11,11 +11,15 @@ import (
 )
 
 var (
+	username          = "someUsername"
 	chatID      int64 = 28
 	receivedMsg       = &tgbotapi.Message{
 		Text: "Some message",
 		Chat: &tgbotapi.Chat{
 			ID: chatID,
+		},
+		From: &tgbotapi.User{
+			UserName: username,
 		},
 	}
 	stats = core.UsersStatistics{
