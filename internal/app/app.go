@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"flag"
-	"log"
 
 	"github.com/arthurshafikov/tg-blackjack/internal/config"
 	"github.com/arthurshafikov/tg-blackjack/internal/logger"
@@ -31,6 +30,7 @@ func Run() {
 
 	ctx := context.Background()
 	config := config.NewConfig(envPath, configFolderPath)
+	logger := logger.NewLogger()
 
 	mongo, err := mongodb.NewMongoDB(ctx, mongodb.Config{
 		Scheme:   config.Database.Scheme,
@@ -39,12 +39,12 @@ func Run() {
 		Password: config.Database.Password,
 	})
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error(err)
+		return
 	}
 
 	repository := repository.NewRepository(mongo)
 
-	logger := logger.NewLogger()
 	services := services.NewServices(services.Deps{
 		Config:     config,
 		Repository: repository,
@@ -53,7 +53,8 @@ func Run() {
 
 	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBot.APIKey)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error(err)
+		return
 	}
 	telegramHelper := handlers.NewHelper(botAPI)
 	commandHandler := commands.NewCommandHandler(handlers.HandlerParams{
@@ -75,6 +76,6 @@ func Run() {
 	})
 
 	if err := telegramBot.Start(); err != nil {
-		log.Fatalln(err)
+		logger.Error(err)
 	}
 }
