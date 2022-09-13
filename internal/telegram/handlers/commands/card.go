@@ -46,11 +46,7 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 		return core.ErrServerError
 	}
 
-	if err := c.finishGameIfNeeded(message); err != nil {
-		return err
-	}
-
-	return nil
+	return c.finishGameIfNeeded(message)
 }
 
 func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
@@ -78,6 +74,7 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 
 	msgText += fmt.Sprintf(c.messages.StoppedDrawing+"\n", c.escapeUnderscoreUsername(message.From.UserName))
 
+	fmt.Printf("%#v\n", msgText)
 	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
 	if err := c.helper.SendMessage(msg); err != nil {
@@ -86,9 +83,5 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 		return core.ErrServerError
 	}
 
-	if err := c.finishGameIfNeeded(message); err != nil {
-		return err
-	}
-
-	return nil
+	return c.finishGameIfNeeded(message)
 }
