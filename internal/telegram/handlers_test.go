@@ -49,7 +49,7 @@ func TestHandleCommand(t *testing.T) {
 	})
 
 	t.Run("HandleNewGame", func(t *testing.T) {
-		command.Text = "/" + core.NewGame
+		command.Text = "/" + core.NewGameCommand
 		command.Entities = &[]tgbotapi.MessageEntity{{Type: "bot_command", Offset: 0, Length: len(command.Text)}}
 		gomock.InOrder(
 			commandHandlerMock.EXPECT().HandleNewGame(command).Return(nil),
@@ -59,7 +59,7 @@ func TestHandleCommand(t *testing.T) {
 	})
 
 	t.Run("HandleDrawCard", func(t *testing.T) {
-		command.Text = "/" + core.DrawCard
+		command.Text = "/" + core.DrawCardCommand
 		command.Entities = &[]tgbotapi.MessageEntity{{Type: "bot_command", Offset: 0, Length: len(command.Text)}}
 		gomock.InOrder(
 			commandHandlerMock.EXPECT().HandleDrawCard(command).Return(nil),
@@ -69,7 +69,7 @@ func TestHandleCommand(t *testing.T) {
 	})
 
 	t.Run("HandleStopDrawing", func(t *testing.T) {
-		command.Text = "/" + core.StopDrawing
+		command.Text = "/" + core.StopDrawingCommand
 		command.Entities = &[]tgbotapi.MessageEntity{{Type: "bot_command", Offset: 0, Length: len(command.Text)}}
 		gomock.InOrder(
 			commandHandlerMock.EXPECT().HandleStopDrawing(command).Return(nil),

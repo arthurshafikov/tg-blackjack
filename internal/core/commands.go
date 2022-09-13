@@ -1,9 +1,9 @@
 package core
 
 const (
-	StartCommand = "start"
-	StatsCommand = "stats"
-	NewGame      = "new"
-	DrawCard     = "draw"
-	StopDrawing  = "stop"
+	StartCommand       = "start"
+	StatsCommand       = "stats"
+	NewGameCommand     = "new"
+	DrawCardCommand    = "draw"
+	StopDrawingCommand = "stop"
 )
