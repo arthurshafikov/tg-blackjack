@@ -30,7 +30,7 @@ func (c *CommandHandler) HandleNewGame(message *tgbotapi.Message) error {
 
 	msgText += "\n\n" + c.messages.GameEnterHint
 
-	return c.sendMessage(tgbotapi.NewMessage(message.Chat.ID, msgText))
+	return c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText))
 }
 
 func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
@@ -78,7 +78,7 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 
 		msgText += fmt.Sprintf("\n\n %s", c.messages.GameStartHint)
 
-		return c.sendMessage(tgbotapi.NewMessage(message.Chat.ID, msgText))
+		return c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText))
 	}
 
 	return nil

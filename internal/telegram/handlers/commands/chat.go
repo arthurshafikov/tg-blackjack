@@ -23,7 +23,7 @@ func (c *CommandHandler) HandleStats(message *tgbotapi.Message) error {
 			userStats.Points,
 		)
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
+	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
-	return c.sendMessage(msg)
+	return c.helper.SendMessage(msg)
 }

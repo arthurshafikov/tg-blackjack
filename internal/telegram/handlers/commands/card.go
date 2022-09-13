@@ -38,9 +38,9 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 		msgText += "\n" + c.messages.PlayerHandBusted
 	}
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
+	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
-	if err := c.sendMessage(msg); err != nil {
+	if err := c.helper.SendMessage(msg); err != nil {
 		return err
 	}
 
@@ -76,9 +76,9 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 
 	msgText += fmt.Sprintf(c.messages.StoppedDrawing+"\n", c.escapeUnderscoreUsername(message.From.UserName))
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, msgText)
+	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
-	if err := c.sendMessage(msg); err != nil {
+	if err := c.helper.SendMessage(msg); err != nil {
 		return err
 	}
 

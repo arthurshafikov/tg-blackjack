@@ -11,6 +11,8 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/repository/mongodb"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
 	"github.com/arthurshafikov/tg-blackjack/internal/telegram"
+	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers"
+	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers/commands"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -29,11 +31,6 @@ func Run() {
 
 	ctx := context.Background()
 	config := config.NewConfig(envPath, configFolderPath)
-
-	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBot.APIKey)
-	if err != nil {
-		log.Fatalln(err)
-	}
 
 	mongo, err := mongodb.NewMongoDB(ctx, mongodb.Config{
 		Scheme:   config.Database.Scheme,
@@ -54,7 +51,28 @@ func Run() {
 		Logger:     logger,
 	})
 
-	telegramBot := telegram.NewBot(ctx, botAPI, services, config.Messages)
+	botAPI, err := tgbotapi.NewBotAPI(config.TelegramBot.APIKey)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	telegramHelper := handlers.NewHelper(botAPI)
+	commandHandler := commands.NewCommandHandler(handlers.HandlerParams{
+		Ctx:      ctx,
+		Services: services,
+		Logger:   logger,
+		Messages: config.Messages,
+		Helper:   telegramHelper,
+	})
+	telegramBot := telegram.NewBot(&telegram.Deps{
+		Ctx:      ctx,
+		Services: services,
+		Logger:   logger,
+		Messages: config.Messages,
+
+		CommandHandler: commandHandler,
+
+		Helper: telegramHelper,
+	})
 
 	if err := telegramBot.Start(); err != nil {
 		log.Fatalln(err)

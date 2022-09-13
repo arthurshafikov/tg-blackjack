@@ -6,44 +6,58 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/config"
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
-	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers/commands"
+	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Bot struct {
 	ctx      context.Context
-	bot      *tgbotapi.BotAPI
 	services *services.Services
-
-	commandHandler *commands.CommandHandler
-
+	logger   services.Logger
 	messages config.Messages
+
+	commandHandler CommandHandler
+
+	helper handlers.TelegramHandlerHelper
 }
 
-func NewBot(
-	ctx context.Context,
-	bot *tgbotapi.BotAPI,
-	services *services.Services,
-	messages config.Messages,
-) *Bot {
-	commandHandler := commands.NewCommandHandler(ctx, bot, services, messages)
+type CommandHandler interface {
+	HandleStart(message *tgbotapi.Message) error
+	HandleStats(message *tgbotapi.Message) error
+	HandleNewGame(message *tgbotapi.Message) error
+	HandleDrawCard(message *tgbotapi.Message) error
+	HandleStopDrawing(message *tgbotapi.Message) error
+}
 
+type Deps struct {
+	Ctx      context.Context
+	Services *services.Services
+	Logger   services.Logger
+	Messages config.Messages
+
+	CommandHandler CommandHandler
+
+	Helper handlers.TelegramHandlerHelper
+}
+
+func NewBot(deps *Deps) *Bot {
 	return &Bot{
-		ctx:      ctx,
-		bot:      bot,
-		services: services,
+		ctx:      deps.Ctx,
+		services: deps.Services,
+		logger:   deps.Logger,
+		messages: deps.Messages,
 
-		commandHandler: commandHandler,
+		commandHandler: deps.CommandHandler,
 
-		messages: messages,
+		helper: deps.Helper,
 	}
 }
 
 func (b *Bot) Start() error {
-	u := tgbotapi.NewUpdate(0)
+	u := b.helper.NewUpdateChannel(0)
 	u.Timeout = 60
 
-	updates, err := b.bot.GetUpdatesChan(u)
+	updates, err := b.helper.GetUpdatesChan(u)
 	if err != nil {
 		return err
 	}

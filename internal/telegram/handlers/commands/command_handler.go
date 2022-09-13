@@ -9,28 +9,26 @@ import (
 	"github.com/arthurshafikov/tg-blackjack/internal/config"
 	"github.com/arthurshafikov/tg-blackjack/internal/core"
 	"github.com/arthurshafikov/tg-blackjack/internal/services"
+	"github.com/arthurshafikov/tg-blackjack/internal/telegram/handlers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type CommandHandler struct {
 	ctx      context.Context
-	bot      *tgbotapi.BotAPI
 	services *services.Services
 
 	messages config.Messages
+
+	helper handlers.TelegramHandlerHelper
 }
 
-func NewCommandHandler(
-	ctx context.Context,
-	bot *tgbotapi.BotAPI,
-	services *services.Services,
-	messages config.Messages,
-) *CommandHandler {
+func NewCommandHandler(handlerParams handlers.HandlerParams) *CommandHandler {
 	return &CommandHandler{
-		ctx:      ctx,
-		bot:      bot,
-		services: services,
-		messages: messages,
+		ctx:      handlerParams.Ctx,
+		services: handlerParams.Services,
+		messages: handlerParams.Messages,
+
+		helper: handlerParams.Helper,
 	}
 }
 
@@ -43,16 +41,9 @@ func (c *CommandHandler) HandleStart(message *tgbotapi.Message) error {
 		return err
 	}
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, c.messages.ChatCreatedSuccessfully)
+	msg := c.helper.NewMessage(message.Chat.ID, c.messages.ChatCreatedSuccessfully)
 
-	return c.sendMessage(msg)
-}
-
-func (c *CommandHandler) sendMessage(msg tgbotapi.MessageConfig) error {
-	msg.ParseMode = "markdown"
-	_, err := c.bot.Send(msg)
-
-	return err
+	return c.helper.SendMessage(msg)
 }
 
 func (c *CommandHandler) escapeUnderscoreUsername(username string) string {
