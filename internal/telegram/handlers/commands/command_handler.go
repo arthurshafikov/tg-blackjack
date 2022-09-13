@@ -12,6 +12,7 @@ import (
 type CommandHandler struct {
 	ctx      context.Context
 	services *services.Services
+	logger   services.Logger
 
 	messages config.Messages
 
@@ -23,6 +24,7 @@ func NewCommandHandler(handlerParams handlers.HandlerParams) *CommandHandler {
 		ctx:      handlerParams.Ctx,
 		services: handlerParams.Services,
 		messages: handlerParams.Messages,
+		logger:   handlerParams.Logger,
 
 		helper: handlerParams.Helper,
 	}

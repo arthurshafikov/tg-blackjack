@@ -19,7 +19,13 @@ func (c *CommandHandler) HandleStart(message *tgbotapi.Message) error {
 
 	msg := c.helper.NewMessage(message.Chat.ID, c.messages.ChatCreatedSuccessfully)
 
-	return c.helper.SendMessage(msg)
+	if err := c.helper.SendMessage(msg); err != nil {
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.HandleStart, error: %w", message.Chat.ID, err))
+
+		return core.ErrServerError
+	}
+
+	return nil
 }
 
 func (c *CommandHandler) HandleStats(message *tgbotapi.Message) error {
@@ -41,5 +47,11 @@ func (c *CommandHandler) HandleStats(message *tgbotapi.Message) error {
 	}
 	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
-	return c.helper.SendMessage(msg)
+	if err := c.helper.SendMessage(msg); err != nil {
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.HandleStats, error: %w", message.Chat.ID, err))
+
+		return core.ErrServerError
+	}
+
+	return nil
 }

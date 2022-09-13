@@ -41,7 +41,9 @@ func (c *CommandHandler) HandleDrawCard(message *tgbotapi.Message) error {
 	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
 	if err := c.helper.SendMessage(msg); err != nil {
-		return err
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.HandleDrawCard, error: %w", message.Chat.ID, err))
+
+		return core.ErrServerError
 	}
 
 	if err := c.finishGameIfNeeded(message); err != nil {
@@ -79,7 +81,9 @@ func (c *CommandHandler) HandleStopDrawing(message *tgbotapi.Message) error {
 	msg := c.helper.NewMessage(message.Chat.ID, msgText)
 
 	if err := c.helper.SendMessage(msg); err != nil {
-		return err
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.HandleStopDrawing, error: %w", message.Chat.ID, err))
+
+		return core.ErrServerError
 	}
 
 	if err := c.finishGameIfNeeded(message); err != nil {

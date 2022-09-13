@@ -30,7 +30,13 @@ func (c *CommandHandler) HandleNewGame(message *tgbotapi.Message) error {
 
 	msgText += "\n\n" + c.messages.GameEnterHint
 
-	return c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText))
+	if err := c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText)); err != nil {
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.HandleNewGame, error: %w", message.Chat.ID, err))
+
+		return core.ErrServerError
+	}
+
+	return nil
 }
 
 func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
@@ -38,47 +44,52 @@ func (c *CommandHandler) finishGameIfNeeded(message *tgbotapi.Message) error {
 	if err != nil {
 		return err
 	}
+	if !gameShouldBeFinished {
+		return nil
+	}
 
-	if gameShouldBeFinished {
-		game, gameStats, err := c.services.Games.FinishGame(c.ctx, message.Chat.ID)
-		if err != nil {
-			return err
+	game, gameStats, err := c.services.Games.FinishGame(c.ctx, message.Chat.ID)
+	if err != nil {
+		return err
+	}
+
+	msgText := c.messages.GameOver + "\n\n"
+	if game.Dealer.IsBlackjack() {
+		msgText += c.messages.DealerBlackjack
+	} else {
+		msgText += c.messages.DealerHand
+	}
+	msgText += "\n"
+
+	for _, card := range game.Dealer {
+		msgText += card.ToString() + " "
+	}
+	msgText += "\n"
+
+	for username, result := range gameStats {
+		var resultText string
+		switch result {
+		case -1:
+			resultText = c.messages.Lose
+		case 0:
+			resultText = c.messages.Push
+		case 1:
+			resultText = c.messages.Win
+		case 2:
+			resultText = c.messages.BlackjackResult
+		default:
+			log.Println("wrong value for result")
 		}
 
-		msgText := c.messages.GameOver + "\n\n"
-		if game.Dealer.IsBlackjack() {
-			msgText += c.messages.DealerBlackjack
-		} else {
-			msgText += c.messages.DealerHand
-		}
-		msgText += "\n"
+		msgText += fmt.Sprintf("\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
+	}
 
-		for _, card := range game.Dealer {
-			msgText += card.ToString() + " "
-		}
-		msgText += "\n"
+	msgText += fmt.Sprintf("\n\n %s", c.messages.GameStartHint)
 
-		for username, result := range gameStats {
-			var resultText string
-			switch result {
-			case -1:
-				resultText = c.messages.Lose
-			case 0:
-				resultText = c.messages.Push
-			case 1:
-				resultText = c.messages.Win
-			case 2:
-				resultText = c.messages.BlackjackResult
-			default:
-				log.Println("wrong value for result")
-			}
+	if err := c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText)); err != nil {
+		c.logger.Error(fmt.Errorf("chatId: %v, func: CommandHandler.finishGameIfNeeded, error: %w", message.Chat.ID, err))
 
-			msgText += fmt.Sprintf("\n@%s - %s", c.escapeUnderscoreUsername(username), resultText)
-		}
-
-		msgText += fmt.Sprintf("\n\n %s", c.messages.GameStartHint)
-
-		return c.helper.SendMessage(c.helper.NewMessage(message.Chat.ID, msgText))
+		return core.ErrServerError
 	}
 
 	return nil
