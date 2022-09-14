@@ -45,3 +45,11 @@ Run integration tests
 ```
 make integration-tests
 ```
+
+---
+## Linters
+
+Run linters (you have to have golangci-lint installed on your PC)
+```
+make lint
+```
